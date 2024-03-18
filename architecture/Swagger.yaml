@@ -6,7 +6,7 @@ info:
   version: 1.0.11
 
 servers:
-  - url: https://petstore3.swagger.io/api/v3
+  - url: https://system.swagger.io/api/v3
 paths:
   /user/registration:
     post:
