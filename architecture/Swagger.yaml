@@ -1,0 +1,1285 @@
+openapi: 3.0.3
+info:
+  title:  The applicant's personal account system
+  description: >-
+
+  version: 1.0.11
+
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+paths:
+  /user/registration:
+    post:
+      tags:
+        - User
+      summary: Create user
+      operationId: createUser
+      requestBody:
+        description: Created user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationModel'
+          application/xml:
+              schema:
+                $ref: '#/components/schemas/UserRegistrationModel'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          description: Invalid data
+
+  /user/login:
+    post:
+      tags:
+        - User
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      requestBody:
+        description: Login
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: name@example.com
+                password:
+                  type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          description: Invalid data
+
+  /user/logout:
+    post:
+      tags:
+        - User
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+          
+
+  /user/{userId}:
+    put:
+      tags:
+        - User
+      summary: Update another user by ID
+      description: This can only be done by the logged-in user.
+      operationId: updateAnotherUser
+      parameters:
+        - name: userId
+          in: path
+          description: User's ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existing user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserDto'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+          
+    get:
+      tags:
+        - User
+      summary: Получить данные другого пользователя
+      description: This can only be done by the logged-in user.
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          description: User's ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+
+
+  /user/profile:
+    put:
+      tags:
+        - User
+      summary: Изменить свои данные пользователя
+      description: This can only be done by the logged-in user.
+      operationId: updateUser
+      requestBody:
+        description: Update an existing user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+          
+    get:
+      tags:
+        - User
+      summary: Получить свои данные пользователя
+      description: This can only be done by the logged-in user.
+      operationId: GetUser
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: User not found
+
+  
+  /user/Document/scan:
+    post:
+      tags:
+        - Document
+      summary: Загрузить скан документа
+      description: This can only be done by the logged-in user.
+      operationId: postScanDocument
+      parameters:
+      - name: DicumentType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+           - passport
+           - education
+           - another
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+    get:
+      tags:
+        - Document
+      summary: Получить скан документа
+      description: This can only be done by the logged-in user.
+      operationId: getScanDocument
+      parameters:
+      - name: DicumentType
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+           - passport
+           - education
+           - another
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+  /user/Document/passport:
+    post:
+      tags:
+        - Document
+      summary: Ввести пасспортные данные
+      description: This can only be done by the logged-in user.
+      operationId: postPassport
+      parameters:
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Passport'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Passport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Passport'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Passport'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Passport'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+    get:
+      tags:
+        - Document
+      summary: Получить данные паспорта
+      description: This can only be done by the logged-in user.
+      operationId: getPassport
+      parameters:
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Passport'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Passport'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+    put:
+      tags:
+        - Document
+      summary: Изменить пасспортные данные
+      description: This can only be done by the logged-in user.
+      operationId: putPassport
+      parameters:
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Passport'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Passport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Passport'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Passport'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Passport'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+  /user/Document/EducationDocument:
+    post:
+      tags:
+        - Document
+      summary: Ввести данные об образовании
+      description: This can only be done by the logged-in user.
+      operationId: postEducationDocument
+      parameters:
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationDocument'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EducationDocument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EducationDocument'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationDocument'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EducationDocument'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+    get:
+      tags:
+        - Document
+      summary: Получить данные об образовании
+      description: This can only be done by the logged-in user.
+      operationId: getEducationDocument
+      parameters:
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationDocument'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EducationDocument'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+    put:
+      tags:
+        - Document
+      summary: Изменить данные об образовании
+      description: This can only be done by the logged-in user.
+      operationId: putEducationDocument
+      parameters:
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationDocument'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/EducationDocument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EducationDocument'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationDocument'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EducationDocument'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+
+  /programs:
+    get:
+      tags:
+        - Programs
+      summary: Получить список программ обучения
+      parameters:
+        - name: faculty
+          in: query
+          description: Фильтрация по факультету
+          schema:
+            type: string
+        - name: educationLevel
+          in: query
+          description: Фильтрация по уровню образования
+          schema:
+            type: string
+        - name: studyForm
+          in: query
+          description: Фильтрация по форме обучения
+          schema:
+            type: string
+        - name: language
+          in: query
+          description: Фильтрация по языку обучения
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: Поиск по названию/коду программы
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Номер страницы для пагинации
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Размер страницы
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramPagedListModel'
+        '400':
+          description: Invalid data
+          
+  /programs/Queue:
+    post:
+      tags:
+        - Programs
+      summary: Создать/Переписать список выбранных программ для обучения
+      parameters:
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgramQueueUserModel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ProgramQueueUserModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProgramQueueUserModel'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramQueueUserModel'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+    get:
+      tags:
+        - Programs
+      summary: Получить список выбранных программ для обучения
+      parameters:
+      - name: userId
+        in: query
+        description: User's ID
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramQueue'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+
+  /Application:
+    get:
+      tags:
+        - Application
+      summary: Get applications
+      description: ''
+      operationId: getApplication
+      parameters:
+        - name: name
+          in: query
+          description: Search by part of the name
+          required: false
+          schema:
+            type: string
+        - name: programId
+          in: query
+          description: Filter by program
+          required: false
+          schema:
+            type: string
+        - name: faculty
+          in: query
+          description: Filter by faculty (multiselect)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: admissionStatus
+          in: query
+          description: Filter by admission status
+          required: false
+          schema:
+            type: string
+            enum:
+             - created
+             - consideration
+             - confirmed
+             - rejected
+             - closed
+        - name: hasManager
+          in: query
+          description: Filter by whether a manager is assigned
+          required: false
+          schema:
+            type: boolean
+        - name: myApplicants
+          in: query
+          description: Filter by applicants assigned to me
+          required: false
+          schema:
+            type: boolean
+        - name: sortByDate
+          in: query
+          description: Sort by date of last modification
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: page
+          in: query
+          description: Номер страницы для пагинации
+          schema:
+            type: integer
+            format: int32
+        - name: size
+          in: query
+          description: Размер страницы
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationPagedListModel'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+  /Application/{ApplicationId}/Status:
+    post:
+      tags:
+        - Application
+      summary: Установить статус заявления
+      operationId: postStatus
+      parameters:
+        - name: ApplicationId
+          in: path
+          description: Id заявления
+          required: true
+          schema:
+            type: string
+            format: id
+        - name: Status
+          in: query
+          description: Статус
+          required: true
+          schema:
+            type: string
+            enum:
+             - created
+             - consideration
+             - confirmed
+             - rejected
+             - closed
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+  /Application/{ApplicationId}/Manager:
+    post:
+      tags:
+        - Application
+      summary: Назначить менеджера на поступление
+      operationId: postManagerAplication
+      parameters:
+        - name: ApplicationId
+          in: path
+          description: Id заявления
+          required: true
+          schema:
+            type: string
+            format: id
+        - name: Manager
+          in: query
+          description: Id менеджера
+          required: true
+          schema:
+            type: string
+            format: id
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+    delete:
+      tags:
+        - Application
+      summary: Отказаться от поступления
+      operationId: deleteManagerAplication
+      parameters:
+        - name: ApplicationId
+          in: path
+          description: Id заявления
+          required: true
+          schema:
+            type: string
+            format: id
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+  /Manager:
+    post:
+      tags:
+        - Manager
+      summary: Создать список менеджеров
+      operationId: postManager
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManagerCreateModel'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ManagerCreateModel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ManagerCreateModel'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagerListModel'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+          
+    get:
+      tags:
+        - Manager
+      summary: Получить список менеджеров
+      operationId: getManager
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagerListModel'
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+          
+  /Admin:
+    post:
+      tags:
+        - Admin
+      summary: Создать список администраторов
+      operationId: postAdmin
+      description: Ввести массив id пользователей, которых нужно назначить администраторами
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                format: id
+          application/xml:
+            schema:
+              type: array
+              items:
+                type: string
+                format: id
+          application/x-www-form-urlencoded:
+            schema:
+              type: array
+              items:
+                type: string
+                format: id
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: id
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+          
+    get:
+      tags:
+        - Admin
+      summary: Получить список администраторов
+      operationId: getAdmin
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: id
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+  /Admin/Import/EducationLevel:
+    post:
+      tags:
+        - Admin
+      summary: Импортировать список уровней образования
+      operationId: postEducationLevel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/EducationLevel'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+  /Admin/Import/Faculties:
+    post:
+      tags:
+        - Admin
+      summary: Импортировать список факультетов
+      operationId: postFaculties
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Faculty'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+          
+  /Admin/Import/Programs:
+    post:
+      tags:
+        - Admin
+      summary: Импортировать список программ
+      operationId: postPrograms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Program'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid data
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+
+components:
+  schemas:
+    UserDto:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          example: name@example.com
+        birthday:
+          type: string
+          format: date-time
+        gender:
+          type: string
+          enum:
+            - female
+            - male
+        citizenship:
+          type: string
+        phone:
+          type: string
+      xml:
+        name: userDto
+        
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - password
+      properties:
+        id:
+          type: string
+          format: id
+        name:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+          example: name@example.com
+        birthday:
+          type: string
+          format: date-time
+        gender:
+          type: string
+          enum:
+            - female
+            - male
+        citizenship:
+          type: string
+        phone:
+          type: string
+      xml:
+        name: user
+        
+    UserRegistrationModel:
+      type: object
+      required:
+        - name
+        - password
+        - email
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+          example: name@example.com
+        birthday:
+          type: string
+          format: date-time
+        gender:
+          type: string
+          enum:
+            - female
+            - male
+        citizenship:
+          type: string
+        phone:
+          type: string
+      xml:
+        name: user
+        
+    Token:
+      type: string
+    
+    Passport:
+      type: object
+      required:
+        - seriesNumber
+        - birthplace
+        - whenIssued
+        - issuedByWhom
+      properties:
+        seriesNumber:
+          type: string
+          example: '0000 000000'
+        birthplace:
+          type: string
+        whenIssued:
+            type: string
+            format: time
+            example: '00-00-0000'
+        issuedByWhom:
+            type: string
+      xml:
+        name: passport
+        
+    EducationDocument:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+      xml:
+        name: educationDocument
+  
+    Program:
+      type: object
+      required:
+        - id
+        - title
+        - study_form
+        - educationLevel
+        - language
+        - faculty
+      properties:
+        id:
+          type: string
+          format: id
+        title:
+          type: string
+        specialty_code:
+          type: string
+        language:
+          type: string
+        study_form:
+          type: string
+        faculty:
+          $ref: '#/components/schemas/Faculty'
+        educationLevel:
+          $ref: '#/components/schemas/EducationLevel'
+  
+    PageInfoModel:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int32
+        count:
+          type: integer
+          format: int32
+        current:
+          type: integer
+          format: int32
+      xml:
+        name: pageInfoModel
+        
+    ProgramPagedListModel:
+      type: object
+      properties:
+        program:
+          type: array
+          items:
+            $ref: '#/components/schemas/Program'
+        pagination:
+          $ref: '#/components/schemas/PageInfoModel'
+      xml:
+        name: programPagedListModel
+        
+    ApplicationPagedListModel:
+      type: object
+      properties:
+        application:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+        pagination:
+          $ref: '#/components/schemas/PageInfoModel'
+      xml:
+        name: applicationPagedListModel
+    
+    Faculty:
+      type: object
+      properties:
+        id:
+          type: string
+          format: id
+        name:
+          type: string
+      xml:
+        name: faculty
+        
+    EducationLevel:
+      type: object
+      required:
+        - id
+        - level
+      properties:
+        id:
+          type: string
+          format: id
+        level:
+          type: string
+      xml:
+        name: educationLevel
+    
+    Application:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: id
+        applicant:
+          $ref: '#/components/schemas/UserDto'
+        program:
+          $ref: '#/components/schemas/Program'
+        manager:
+          $ref: '#/components/schemas/UserDto'
+        status:
+          $ref: '#/components/schemas/StatusModel'
+        
+      xml:
+        name: Application
+    
+    StatusModel:
+      type: string
+      enum:
+        - created
+        - consideration
+        - confirmed
+        - rejected
+        - closed
+    
+    ProgramQueue:
+      type: object
+      properties:
+        program:
+          type: array
+          items:
+            $ref: '#/components/schemas/Program'
+      xml:
+        name: ProgramQueue
+    
+    ProgramQueueUserModel:
+      type: object
+      required:
+      - userId
+      properties:
+        userId:
+          type: string
+          format: id
+        program:
+          $ref: '#/components/schemas/ProgramQueue'
+      xml:
+        name: ProgramQueueUserModel
+        
+    ManagerCreateModel:
+      type: object
+      properties:
+        managers:
+          type: array
+          items:
+            type: object
+            required:
+             - id
+             - mainManager
+            properties:
+              id:
+                type: string
+                format: id
+              mainManager:
+                type: boolean
+                example: false
+                
+    ManagerListModel:
+      type: object
+      properties:
+        managers:
+          type: array
+          items:
+            type: object
+            properties:
+              user:
+                $ref: '#/components/schemas/UserDto'
+              mainManager:
+                type: boolean
+                example: false
