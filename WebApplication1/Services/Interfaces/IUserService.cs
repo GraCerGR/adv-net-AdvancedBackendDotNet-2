@@ -1,7 +1,7 @@
-﻿using MVC.Models;
-using MVC.Models.DTO;
+﻿using WebApplication1.Models;
+using WebApplication1.Models.DTO;
 
-namespace MVC.Services.Interfaces
+namespace WebApplication1.Services.Interfaces
 {
     public interface IUserService
     {

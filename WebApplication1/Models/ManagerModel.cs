@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using MVC.Models.DTO;
+using WebApplication1.Models.DTO;
 
-namespace MVC.Models
+namespace WebApplication1.Models
 {
     public class ManagerModel
     {

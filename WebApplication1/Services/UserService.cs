@@ -1,6 +1,6 @@
-﻿using MVC.Context;
-using MVC.Models;
-using MVC.Services.Interfaces;
+﻿using WebApplication1.Context;
+using WebApplication1.Models;
+using WebApplication1.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,9 +9,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using MVC.Models.DTO;
+using WebApplication1.Models.DTO;
 
-namespace MVC.Services
+namespace WebApplication1.Services
 {
     public class UserService : IUserService
     {
