@@ -55,7 +55,7 @@ namespace WebApplication1.Controllers
 
 
         [HttpGet("profile/{userApplicantId}")]
-        [Authorize]
+        [Authorize(Roles = "Manager, MainManager")]
         public async Task<UserDto> GetProfileById(string userApplicantId)
         {
 /*            try
