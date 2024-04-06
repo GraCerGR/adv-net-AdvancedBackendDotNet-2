@@ -107,6 +107,30 @@ namespace WebApplication1.Services
                 throw ex;
             }
 
+            // Роли
+
+        string role = "Applicant";
+
+        var manager = await _context.Managers.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
+
+            if (manager != null)
+            {
+                if (manager.MainManager == false)
+                {
+                    role = "Manager";
+                }
+                else
+                {
+                    role = "MainManager";
+                }
+            }
+
+/*            if (await _context.Admins.FirstOrDefaultAsync(x => x.UserId == userEntity.Id) != null)
+            {
+                role = "Admin";
+            }*/
+
+
             // Генерация токена
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes("1234567890123456789012345678901234567890");
@@ -119,7 +143,8 @@ namespace WebApplication1.Services
                 Audience = "HITS",
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-            new Claim(ClaimTypes.Name, userEntity.Id.ToString())
+            new Claim(ClaimTypes.Name, userEntity.Id.ToString()),
+            new Claim(ClaimTypes.Role, role)
                 })
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

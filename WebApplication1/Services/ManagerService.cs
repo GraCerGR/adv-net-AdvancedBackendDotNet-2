@@ -38,7 +38,7 @@ namespace WebApplication1.Services
                 if (managerEntity != null)
                 {
                     var ex = new Exception();
-                    ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "User " + managerModel.Id + " is already a manager");
+                    ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "User " + managerModel.Id + " is already a manager. Previous users are assigned");
                     throw ex;
                 }
 
