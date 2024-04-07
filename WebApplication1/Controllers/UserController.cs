@@ -55,7 +55,7 @@ namespace WebApplication1.Controllers
 
 
         [HttpGet("profile/{userApplicantId}")]
-        [Authorize(Roles = "Manager, MainManager")]
+        [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<UserDto> GetProfileById(string userApplicantId)
         {
 /*            try
@@ -68,13 +68,43 @@ namespace WebApplication1.Controllers
 
                 var userId = await _userService.GetUserIdFromToken(bearerToken);
 
-                var userProfile = await _userService.GetProfile(userId);
+                var userProfile = await _userService.GetProfile(userId); // - Существует такой пользователь или нет
 
                 //Проверка: UserId менеджер абитуриента userApplicantId
 
 
 
                 return await _userService.GetProfile(userApplicantId);
+        }
+
+        [HttpPut("profile")]
+        [Authorize]
+        public async Task<UserDto> PutProfile(EditUserModel editUserModel)
+        {
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+
+            var userId = await _userService.GetUserIdFromToken(bearerToken);
+
+            return await _userService.EditProfile(editUserModel, userId);
+        }
+
+        [HttpPut("profile/{userApplicantId}")]
+        [Authorize(Roles = "Manager, MainManager, Admin")]
+        public async Task<UserDto> PutProfileById(string userApplicantId, EditUserModel editUserModel)
+        {
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+
+            var userId = await _userService.GetUserIdFromToken(bearerToken);
+
+            var userProfile = await _userService.GetProfile(userId);
+
+
+            //Проверка: UserId менеджер абитуриента userApplicantId
+
+
+            return await _userService.EditProfile(editUserModel, userApplicantId);
         }
     }
 }

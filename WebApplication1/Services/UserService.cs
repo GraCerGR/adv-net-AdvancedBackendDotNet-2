@@ -182,6 +182,39 @@ namespace WebApplication1.Services
             return userProfile;
         }
 
+        public async Task<UserDto> EditProfile(EditUserModel editUserModel, string userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            CheckGender(editUserModel.Gender);
+            CheckBirthdate(editUserModel.Birthdate);
+
+            if (editUserModel.Birthdate.HasValue)
+            {
+                editUserModel.Birthdate = editUserModel.Birthdate.Value.ToUniversalTime();
+            }
+
+            user.Name = editUserModel?.Name;
+            user.Email = editUserModel?.Email;
+            user.Birthdate = editUserModel?.Birthdate;
+            user.Gender = editUserModel?.Gender;
+            user.Citizenship = editUserModel?.Citizenship;
+            user.PhoneNumber = editUserModel?.PhoneNumber;
+
+            await _context.SaveChangesAsync();
+
+            return await GetProfile(userId);
+        }
+
+
+
+
+
         public async Task<string> GetUserIdFromToken(string bearerToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

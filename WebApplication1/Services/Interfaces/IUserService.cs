@@ -11,9 +11,7 @@ namespace WebApplication1.Services.Interfaces
 
 
  //       Task LogoutUser(string token);
-        //Task EditUserProfile(Guid guid, UserEditDto userEditDto);
-        //Task<TokenResponse> RegisterUser(UserRegisterDto userRegisterDto);
-        //Task<TokenResponse> LoginUser(LoginDto credentials);
+        Task<UserDto> EditProfile(EditUserModel editUserModel, string userId);
 
         Task<UserDto> GetProfile(string guid);
 
