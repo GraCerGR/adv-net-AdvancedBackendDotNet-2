@@ -112,11 +112,11 @@ namespace WebApplication1.Controllers
             return await _userService.ChangePassword(userId, editPasswordModel);
         }
 
-        [Authorize]
+/*        [Authorize]
         [HttpPost("send/code")]
         public async Task<string> CheckCode(int code)
         {
             return await _userService.SendCode(code, Guid.Parse(User.Identity.Name));
-        }
+        }*/
     }
 }
