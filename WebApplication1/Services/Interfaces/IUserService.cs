@@ -16,5 +16,7 @@ namespace WebApplication1.Services.Interfaces
         Task<UserDto> GetProfile(string guid);
 
         Task<string> GetUserIdFromToken(string token);
+
+        Task<string> ChangePassword(string guid, EditPasswordModel editPasswordModel);
     }
 }

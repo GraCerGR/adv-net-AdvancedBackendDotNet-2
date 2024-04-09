@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Models.DTO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApplication1.Services
 {
@@ -30,14 +31,7 @@ namespace WebApplication1.Services
             CheckGender(userRegisterModel.Gender);
             CheckBirthdate(userRegisterModel.Birthdate);
 
-            byte[] salt;
-            RandomNumberGenerator.Create().GetBytes(salt = new byte[16]);
-            var pbkdf2 = new Rfc2898DeriveBytes(userRegisterModel.Password, salt, 100000);
-            var hash = pbkdf2.GetBytes(20);
-            var hashBytes = new byte[36];
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 20);
-            var savedPasswordHash = Convert.ToBase64String(hashBytes);
+            var savedPasswordHash = await HashingPassword(userRegisterModel.Password);
 
             if (userRegisterModel.Birthdate.HasValue)
             {
@@ -165,7 +159,11 @@ namespace WebApplication1.Services
 
             if (user == null)
             {
-                return null;
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
+                    "User not exists"
+                );
+                throw ex;
             }
 
             var userProfile = new UserDto
@@ -188,7 +186,11 @@ namespace WebApplication1.Services
 
             if (user == null)
             {
-                return null;
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
+                    "User not exists"
+                );
+                throw ex;
             }
 
             CheckGender(editUserModel.Gender);
@@ -211,7 +213,56 @@ namespace WebApplication1.Services
             return await GetProfile(userId);
         }
 
+        public async Task<string> ChangePassword(string userId, EditPasswordModel editPasswordModel)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
 
+            if (user == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
+                    "User not exists"
+                );
+                throw ex;
+            }
+
+            if (!CheckHashPassword(user.Password, editPasswordModel.OldPassword))
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
+                    "Wrong password"
+                );
+                throw ex;
+            }
+
+            var savedPasswordHash = await HashingPassword(editPasswordModel.NewPassword);
+            Random random = new Random();
+
+            var addDbNumbre = new EditPasswordCode
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                NewPassword = savedPasswordHash,
+                Code = random.Next(100000, 999999).ToString(),
+                CreatedDate = DateTime.UtcNow
+        };
+            try
+            {
+                await _context.Codes.AddAsync(addDbNumbre);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var innerException = ex.InnerException;
+                while (innerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + innerException.Message);
+                    innerException = innerException.InnerException;
+                }
+            }
+
+            return "Enter the code";
+        }
 
 
 
@@ -264,6 +315,18 @@ namespace WebApplication1.Services
                 if (hashBytes[i + 16] != hash[i])
                     return false;
             return true;
+        }
+
+        private async Task<string> HashingPassword(string password)
+        {
+            byte[] salt;
+            RandomNumberGenerator.Create().GetBytes(salt = new byte[16]);
+            var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000);
+            var hash = pbkdf2.GetBytes(20);
+            var hashBytes = new byte[36];
+            Array.Copy(salt, 0, hashBytes, 0, 16);
+            Array.Copy(hash, 0, hashBytes, 16, 20);
+            return Convert.ToBase64String(hashBytes);
         }
     }
 }

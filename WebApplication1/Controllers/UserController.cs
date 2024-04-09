@@ -43,13 +43,9 @@ namespace WebApplication1.Controllers
         public async Task<UserDto> GetProfile()
         {
                 string authorizationHeader = Request.Headers["Authorization"];
-                // Извлекаем токен Bearer из значения заголовка
                 string bearerToken = authorizationHeader.Substring("Bearer ".Length);
 
-                //string bearerToken = HttpContext.Session.GetString("Token");
-
                 var userId = await _userService.GetUserIdFromToken(bearerToken);
-
                 return await _userService.GetProfile(userId);
         }
 
@@ -83,7 +79,6 @@ namespace WebApplication1.Controllers
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
-
             var userId = await _userService.GetUserIdFromToken(bearerToken);
 
             return await _userService.EditProfile(editUserModel, userId);
@@ -95,7 +90,6 @@ namespace WebApplication1.Controllers
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
-
             var userId = await _userService.GetUserIdFromToken(bearerToken);
 
             var userProfile = await _userService.GetProfile(userId);
@@ -105,6 +99,24 @@ namespace WebApplication1.Controllers
 
 
             return await _userService.EditProfile(editUserModel, userApplicantId);
+        }
+
+        [HttpPost("profile/changePassword")]
+        [Authorize]
+        public async Task<string> ChangePassword(EditPasswordModel editPasswordModel)
+        {
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+            var userId = await _userService.GetUserIdFromToken(bearerToken);
+
+            return await _userService.ChangePassword(userId, editPasswordModel);
+        }
+
+        [Authorize]
+        [HttpPost("send/code")]
+        public async Task<string> CheckCode(int code)
+        {
+            return await _userService.SendCode(code, Guid.Parse(User.Identity.Name));
         }
     }
 }
