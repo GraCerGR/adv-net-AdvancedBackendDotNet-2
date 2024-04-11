@@ -17,10 +17,12 @@ namespace WebApplication1.Services
     public class UserService : IUserService
     {
         private readonly ApplicationContext _context;
+        private readonly INotificationService _notificationService;
 
-        public UserService(ApplicationContext context)
+        public UserService(ApplicationContext context, INotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
 
@@ -238,17 +240,27 @@ namespace WebApplication1.Services
             var savedPasswordHash = await HashingPassword(editPasswordModel.NewPassword);
             Random random = new Random();
 
-            var addDbNumbre = new EditPasswordCode
+            var addDbNumber = new EditPasswordCode
             {
                 Id = Guid.NewGuid(),
                 UserId = userId,
                 NewPassword = savedPasswordHash,
                 Code = random.Next(100000, 999999).ToString(),
                 CreatedDate = DateTime.UtcNow
-        };
+            };
+
+            var messageData = new MessageDto
+            {
+                Id = Guid.NewGuid(),
+                Email = user.Email,
+                Message = $"Your verification code: {addDbNumber.Code}"
+            };
+
+            await _notificationService.SendNotificationRabbitMQ(messageData);
+
             try
             {
-                await _context.Codes.AddAsync(addDbNumbre);
+                await _context.Codes.AddAsync(addDbNumber);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException ex)

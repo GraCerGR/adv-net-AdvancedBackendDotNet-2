@@ -7,6 +7,7 @@ using System.Text;
 using WebApplication1.Services.Interfaces;
 using WebApplication1.Services;
 using WebApplication1.Services;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(b
 // Add services to the container.
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IManagerService, ManagerService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
