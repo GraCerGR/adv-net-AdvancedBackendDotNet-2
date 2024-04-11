@@ -22,9 +22,9 @@ namespace WebApplication1.Services
             var factory = new ConnectionFactory()
             {
                 HostName = "localhost",
-                Port = 15672 //5672,
-                //UserName = "guest",
-                //Password = "guest"
+                Port = 5672,
+                UserName = "guest",
+                Password = "guest"
             };
 
             using var connection = factory.CreateConnection();
@@ -43,8 +43,6 @@ namespace WebApplication1.Services
             routingKey: "EmailQueue",
             basicProperties: null,
             body: body);
-
-            // Console.WriteLine("отправ: {0}", message);
         }
 
     }
