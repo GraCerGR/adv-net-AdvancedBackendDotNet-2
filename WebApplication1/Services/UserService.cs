@@ -11,18 +11,18 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Models.DTO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 
 namespace WebApplication1.Services
 {
     public class UserService : IUserService
     {
         private readonly ApplicationContext _context;
-        private readonly INotificationService _notificationService;
 
-        public UserService(ApplicationContext context, INotificationService notificationService)
+        public UserService(ApplicationContext context)
         {
             _context = context;
-            _notificationService = notificationService;
         }
 
 
@@ -256,7 +256,7 @@ namespace WebApplication1.Services
                 Message = $"Your verification code: {addDbNumber.Code}"
             };
 
-            await _notificationService.SendNotificationRabbitMQ(messageData);
+            await SendNotificationRabbitMQ(messageData);
 
             try
             {
@@ -276,6 +276,36 @@ namespace WebApplication1.Services
             return "Enter the code";
         }
 
+
+        public async Task SendNotificationRabbitMQ(MessageDto messageData)
+        {
+            var factory = new ConnectionFactory()
+            {
+                HostName = "localhost",
+                Port = 5672,
+                UserName = "guest",
+                Password = "guest"
+            };
+
+
+            using var connection = factory.CreateConnection();
+            using var channel = connection.CreateModel();
+            //Console.WriteLine("Письмо отправлено");
+
+            channel.QueueDeclare(queue: "EmailQueue",
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null);
+
+            var message = JsonConvert.SerializeObject(messageData);
+            var body = Encoding.UTF8.GetBytes(message);
+
+            channel.BasicPublish(exchange: "",
+            routingKey: "EmailQueue",
+            basicProperties: null,
+            body: body);
+        }
 
 
         public async Task<string> GetUserIdFromToken(string bearerToken)

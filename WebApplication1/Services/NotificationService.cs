@@ -1,25 +1,27 @@
-﻿using Newtonsoft.Json;
+﻿using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Text;
-using WebApplication1.Context;
+using Newtonsoft.Json;
 using WebApplication1.Models.DTO;
+using WebApplication1.Context;
 using WebApplication1.Services.Interfaces;
-using RabbitMQ.Client;
+using System.Net.Mail;
+using System.Net;
 
 namespace WebApplication1.Services
 {
-    public class NotificationService: INotificationService
+    public class NotificationService : BackgroundService
     {
-        private readonly ApplicationContext _context;
+        private IServiceProvider _sp;
+        private ConnectionFactory _factory;
+        private IConnection _connection;
+        private IModel _channel;
 
-        public NotificationService(ApplicationContext context)
+        public NotificationService(IServiceProvider sp)
         {
-            _context = context;
-        }
+            _sp = sp;
 
-        public async Task SendNotificationRabbitMQ(MessageDto messageData)
-        {
-            var factory = new ConnectionFactory()
+            _factory = new ConnectionFactory()
             {
                 HostName = "localhost",
                 Port = 5672,
@@ -27,23 +29,68 @@ namespace WebApplication1.Services
                 Password = "guest"
             };
 
-            using var connection = factory.CreateConnection();
-            using var channel = connection.CreateModel();
+            _connection = _factory.CreateConnection();
 
-            channel.QueueDeclare(queue: "EmailQueue",
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null);
+            _channel = _connection.CreateModel();
 
-            var message = JsonConvert.SerializeObject(messageData);
-            var body = Encoding.UTF8.GetBytes(message);
-
-            channel.BasicPublish(exchange: "",
-            routingKey: "EmailQueue",
-            basicProperties: null,
-            body: body);
+            _channel.QueueDeclare(
+                queue: "EmailQueue",
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
         }
 
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+
+            if (stoppingToken.IsCancellationRequested)
+            {
+                _channel.Dispose();
+                _connection.Dispose();
+                return Task.CompletedTask;
+            }
+
+            var consumer = new EventingBasicConsumer(_channel);
+
+            consumer.Received += (model, ea) =>
+            {
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
+                Console.WriteLine(" [x] Received {0}", message);
+
+                var emailData = JsonConvert.DeserializeObject<MessageDto>(message);
+                SendEmail(emailData);
+
+/*                Task.Run(() =>
+                {
+                    var emailData = JsonConvert.DeserializeObject<MessageDto>(message);
+                    SendEmail(emailData);
+                });*/
+            };
+
+            _channel.BasicConsume(queue: "EmailQueue", autoAck: true, consumer: consumer);
+
+            return Task.CompletedTask;
+        }
+
+        public async Task SendEmail(MessageDto messageData)
+        {
+            MailAddress from = new MailAddress("lk.gs.applicant@gmail.com", "Личный кабинет ТГУ");
+            MailAddress toAddress = new MailAddress($"{messageData.Email}");
+
+            MailMessage mailMessage = new MailMessage(from, toAddress);
+            mailMessage.Subject = "Verification";
+            mailMessage.Body = $"{messageData.Message}";
+
+            SmtpClient smtpClient = new SmtpClient();
+            smtpClient.Host = "smtp.gmail.com";
+            smtpClient.Port = 587;
+            smtpClient.EnableSsl = true;
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = new NetworkCredential(from.Address, "iadw bgpe hrfm twcq");
+            await smtpClient.SendMailAsync(mailMessage);
+        }
     }
 }
