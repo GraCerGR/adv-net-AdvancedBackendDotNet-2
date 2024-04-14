@@ -103,9 +103,9 @@ namespace WebApplication1.Services
 
             // Роли
 
-        string role = "Applicant";
+            string role = "Applicant";
 
-        var manager = await _context.Managers.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
+            var manager = await _context.Managers.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
 
             if (manager != null)
             {
