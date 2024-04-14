@@ -101,7 +101,7 @@ namespace WebApplication1.Controllers
             return await _userService.EditProfile(editUserModel, userApplicantId);
         }
 
-        [HttpPost("profile/changePassword")]
+        [HttpPut("profile/changePassword")]
         [Authorize]
         public async Task<string> ChangePassword(EditPasswordModel editPasswordModel)
         {
@@ -112,11 +112,15 @@ namespace WebApplication1.Controllers
             return await _userService.ChangePassword(userId, editPasswordModel);
         }
 
-/*        [Authorize]
-        [HttpPost("send/code")]
-        public async Task<string> CheckCode(int code)
+        [Authorize]
+        [HttpPost("profile/code")]
+        public async Task CheckCode(string code)
         {
-            return await _userService.SendCode(code, Guid.Parse(User.Identity.Name));
-        }*/
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+            var userId = await _userService.GetUserIdFromToken(bearerToken);
+
+            await _userService.SendCode(code, userId);
+        }
     }
 }

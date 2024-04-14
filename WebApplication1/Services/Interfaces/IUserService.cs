@@ -18,5 +18,7 @@ namespace WebApplication1.Services.Interfaces
         Task<string> GetUserIdFromToken(string token);
 
         Task<string> ChangePassword(string guid, EditPasswordModel editPasswordModel);
+
+        Task SendCode(string code, string userId);
     }
 }

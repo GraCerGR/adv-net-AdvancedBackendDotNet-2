@@ -85,21 +85,19 @@ namespace WebApplication1.Services
 
             var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Email == credentials.Email);
 
-            if (userEntity == null)
+/*            if (userEntity == null)
             {
                 var ex = new Exception();
                 ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
                     "User not exists"
                 );
                 throw ex;
-            }
+            }*/
 
             if (!CheckHashPassword(userEntity.Password, credentials.Password))
             {
                 var ex = new Exception();
-                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
-                    "Wrong password"
-                );
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),"Wrong password");
                 throw ex;
             }
 
@@ -159,14 +157,14 @@ namespace WebApplication1.Services
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
 
-            if (user == null)
+/*            if (user == null)
             {
                 var ex = new Exception();
                 ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
                     "User not exists"
                 );
                 throw ex;
-            }
+            }*/
 
             var userProfile = new UserDto
             {
@@ -186,14 +184,14 @@ namespace WebApplication1.Services
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
 
-            if (user == null)
+/*            if (user == null)
             {
                 var ex = new Exception();
                 ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
                     "User not exists"
                 );
                 throw ex;
-            }
+            }*/
 
             CheckGender(editUserModel.Gender);
             CheckBirthdate(editUserModel.Birthdate);
@@ -219,23 +217,30 @@ namespace WebApplication1.Services
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
 
-            if (user == null)
+/*            if (user == null)
             {
                 var ex = new Exception();
                 ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
                     "User not exists"
                 );
                 throw ex;
-            }
+            }*/
 
             if (!CheckHashPassword(user.Password, editPasswordModel.OldPassword))
             {
                 var ex = new Exception();
-                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
-                    "Wrong password"
-                );
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),"Wrong password");
                 throw ex;
             }
+
+            //Удаление всех прошлых проверочных кодов
+            var codesToDelete = await _context.Codes.Where(x => x.UserId == userId).ToListAsync();
+            if (codesToDelete != null)
+            {
+                _context.Codes.RemoveRange(codesToDelete);
+                await _context.SaveChangesAsync();
+            }
+            //
 
             var savedPasswordHash = await HashingPassword(editPasswordModel.NewPassword);
             Random random = new Random();
@@ -273,7 +278,7 @@ namespace WebApplication1.Services
                 }
             }
 
-            return "Enter the code";
+            return $"The verification code has been sent to your email {user.Email}";
         }
 
 
@@ -308,11 +313,50 @@ namespace WebApplication1.Services
         }
 
 
+        public async Task SendCode(string code, string userId)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+
+            var codeDB = await _context.Codes.FirstOrDefaultAsync(x => x.Code == code && x.UserId == userId);
+
+            if (codeDB == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status403Forbidden.ToString(), "Invalid code");
+                throw ex;
+            }
+            else if (codeDB.CreatedDate.AddMinutes(10) < DateTime.UtcNow)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status403Forbidden.ToString(), "This code is outdated");
+                throw ex;
+            }
+            else
+            {
+                user.Password = codeDB.NewPassword;
+                await _context.SaveChangesAsync();
+                _context.Codes.Remove(codeDB);
+                _context.SaveChanges();
+            }
+        }
+
+
         public async Task<string> GetUserIdFromToken(string bearerToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(bearerToken);
-            return await Task.FromResult(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value);
+
+            string userId = await Task.FromResult(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value);
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            if (user == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),"User not exists");
+                throw ex;
+            }
+
+            return userId;
         }
 
 
