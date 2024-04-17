@@ -19,10 +19,12 @@ namespace WebApplication1.Services
     public class UserService : IUserService
     {
         private readonly ApplicationContext _context;
+        private readonly TokenService _tokenService;
 
-        public UserService(ApplicationContext context)
+        public UserService(ApplicationContext context, TokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
 
@@ -85,15 +87,6 @@ namespace WebApplication1.Services
 
             var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Email == credentials.Email);
 
-/*            if (userEntity == null)
-            {
-                var ex = new Exception();
-                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(),
-                    "User not exists"
-                );
-                throw ex;
-            }*/
-
             if (!CheckHashPassword(userEntity.Password, credentials.Password))
             {
                 var ex = new Exception();
@@ -119,36 +112,31 @@ namespace WebApplication1.Services
                 }
             }
 
-/*            if (await _context.Admins.FirstOrDefaultAsync(x => x.UserId == userEntity.Id) != null)
-            {
-                role = "Admin";
-            }*/
+            /*            // Генерация токена
+                        var tokenHandler = new JwtSecurityTokenHandler();
+                        var key = Encoding.UTF8.GetBytes("1234567890123456789012345678901234567890");
+                        var tokenDescriptor = new SecurityTokenDescriptor()
+                        {
+                            NotBefore = DateTime.UtcNow,
+                            Expires = DateTime.UtcNow.AddHours(1),
+                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                            Issuer = "HITS",
+                            Audience = "HITS",
+                            Subject = new ClaimsIdentity(new Claim[]
+                            {
+                        new Claim(ClaimTypes.Name, userEntity.Id.ToString()),
+                        new Claim(ClaimTypes.Role, role)
+                            })
+                        };
+                        var token = tokenHandler.CreateToken(tokenDescriptor);
+                        var tokenString = tokenHandler.WriteToken(token);
 
+                        var result = new TokenResponse()
+                        {
+                            Token = tokenString
+                        };*/
 
-            // Генерация токена
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes("1234567890123456789012345678901234567890");
-            var tokenDescriptor = new SecurityTokenDescriptor()
-            {
-                NotBefore = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = "HITS",
-                Audience = "HITS",
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-            new Claim(ClaimTypes.Name, userEntity.Id.ToString()),
-            new Claim(ClaimTypes.Role, role)
-                })
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            var result = new TokenResponse()
-            {
-                Token = tokenString
-            };
-
+            var result = await _tokenService.GenerateTokens(userEntity.Id, role);
             return result;
         }
 

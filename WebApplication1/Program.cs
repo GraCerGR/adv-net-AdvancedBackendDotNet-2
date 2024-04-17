@@ -7,15 +7,25 @@ using System.Text;
 using WebApplication1.Services.Interfaces;
 using WebApplication1.Services;
 using RabbitMQ.Client;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("appsettings.json");
+string jwtSecret = builder.Configuration["TokenSettings:JwtSecret"];
+string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];
 
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
+//builder.Services.AddSingleton<ITokenService>(new TokenService(jwtSecret, refreshSecret));
+//builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddSingleton(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IManagerService, ManagerService>();
 //builder.Services.AddScoped<INotificationService, NotificationService>();
+//builder.Services.AddScoped<ITokenService, TokenService>();
+//builder.Services.AddScoped<ITokenService>(s => new TokenService(jwtSecret, refreshSecret));
 
 builder.Services.AddHostedService<NotificationService>();
 
@@ -64,7 +74,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = true,
         ValidAudience = "HITS",
         ValidateAudience = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1234567890123456789012345678901234567890")),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("11234567890123456789012345678901234567890")),
         ValidateLifetime = true,
         LifetimeValidator = (before, expires, token, parameters) =>
         {
