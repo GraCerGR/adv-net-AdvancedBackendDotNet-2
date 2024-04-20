@@ -13,6 +13,8 @@ using WebApplication1.Models.DTO;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using Azure.Core;
+using WebApplication1.Migrations;
 
 namespace WebApplication1.Services
 {
@@ -87,6 +89,13 @@ namespace WebApplication1.Services
 
             var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Email == credentials.Email);
 
+            if (userEntity == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "User not exists");
+                throw ex;
+            }
+
             if (!CheckHashPassword(userEntity.Password, credentials.Password))
             {
                 var ex = new Exception();
@@ -94,7 +103,7 @@ namespace WebApplication1.Services
                 throw ex;
             }
 
-            // Роли
+            //---------------------------------- Роли ---------------------------------------
 
             string role = "Applicant";
 
@@ -112,31 +121,49 @@ namespace WebApplication1.Services
                 }
             }
 
-            /*            // Генерация токена
-                        var tokenHandler = new JwtSecurityTokenHandler();
-                        var key = Encoding.UTF8.GetBytes("1234567890123456789012345678901234567890");
-                        var tokenDescriptor = new SecurityTokenDescriptor()
-                        {
-                            NotBefore = DateTime.UtcNow,
-                            Expires = DateTime.UtcNow.AddHours(1),
-                            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                            Issuer = "HITS",
-                            Audience = "HITS",
-                            Subject = new ClaimsIdentity(new Claim[]
-                            {
-                        new Claim(ClaimTypes.Name, userEntity.Id.ToString()),
-                        new Claim(ClaimTypes.Role, role)
-                            })
-                        };
-                        var token = tokenHandler.CreateToken(tokenDescriptor);
-                        var tokenString = tokenHandler.WriteToken(token);
+            //---------------------------------- Токены ---------------------------------------
 
-                        var result = new TokenResponse()
-                        {
-                            Token = tokenString
-                        };*/
+            TokenModel accessToken = await _tokenService.GenerateAccessToken(userEntity.Id, role);
+            TokenModel refreshToken = await _tokenService.GenerateRefreshToken(userEntity.Id, role);
 
-            var result = await _tokenService.GenerateTokens(userEntity.Id, role);
+            var refTokenDB = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
+
+            if (refTokenDB != null) //Удаление прошлых рефреш токенов
+            {
+                _context.RefreshTokens.Remove(refTokenDB);
+                await _context.SaveChangesAsync();
+            }
+
+            RefreshTokenModel tokenDB = new RefreshTokenModel
+            {
+                Id = Guid.NewGuid(),
+                UserId = userEntity.Id,
+                RefreshToken = refreshToken.Token,
+                Expires = refreshToken.Expires
+            };
+
+            try
+            {
+                await _context.RefreshTokens.AddAsync(tokenDB);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var innerException = ex.InnerException;
+                while (innerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + innerException.Message);
+                    innerException = innerException.InnerException;
+                }
+            }
+
+
+            TokenResponse result = new TokenResponse
+            {
+                AccessToken = accessToken.Token,
+                RefreshToken = refreshToken.Token
+            };
+
             return result;
         }
 

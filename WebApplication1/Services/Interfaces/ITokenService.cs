@@ -4,6 +4,10 @@ namespace WebApplication1.Services.Interfaces
 {
     public interface ITokenService
     {
-        Task<TokenResponse> GenerateTokens(Guid userId, string role);
+        Task<TokenModel> GenerateAccessToken(Guid userId, string role);
+
+        Task<TokenModel> GenerateRefreshToken(Guid userId, string role);
+
+/*        Task<TokenModel> RefreshAccessToken(string refreshToken);*/
     }
 }

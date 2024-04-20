@@ -18,55 +18,90 @@ namespace WebApplication1.Services
             _refreshSecret = refreshSecret;
         }
 
-        public async Task<TokenResponse> GenerateTokens(Guid userId, string role)
+        public async Task<TokenModel> GenerateAccessToken(Guid userId, string role)
         {
-            var accessExpires = DateTime.UtcNow.AddMinutes(1);
-            var refreshExpires = DateTime.UtcNow.AddDays(7);
-
+            var accessExpires = DateTime.UtcNow.AddMinutes(5);
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtKey = Encoding.UTF8.GetBytes(_jwtSecret);
-            var refreshKey = Encoding.UTF8.GetBytes(_refreshSecret);
 
-            //AccessToken
             var accessTokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim(ClaimTypes.Name, userId.ToString()),
-                new Claim(ClaimTypes.Role, role)
-            }),
+            new Claim(ClaimTypes.Name, userId.ToString()),
+            new Claim(ClaimTypes.Role, role)
+        }),
                 Expires = accessExpires,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(jwtKey), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = "HITS",
                 Audience = "HITS"
             };
+
             var accessToken = tokenHandler.CreateToken(accessTokenDescriptor);
             var accessTokenString = tokenHandler.WriteToken(accessToken);
 
-            //RefreshToken
-            var refreshExpiresInMinutes = (int)(refreshExpires - DateTime.UtcNow).TotalMinutes;
+            TokenModel token = new TokenModel
+            {
+                Token = accessTokenString,
+                Expires = accessExpires
+            };
+
+            return token;
+        }
+
+        public async Task<TokenModel> GenerateRefreshToken(Guid userId, string role)
+        {
+            var refreshExpires = DateTime.UtcNow.AddDays(7);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var refreshKey = Encoding.UTF8.GetBytes(_refreshSecret);
+
             var refreshDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim(ClaimTypes.Name, userId.ToString()),
-                new Claim(ClaimTypes.Role, role),
-                new Claim("TokenType", "Refresh")
-            }),
+            new Claim(ClaimTypes.Name, userId.ToString()),
+            new Claim(ClaimTypes.Role, role),
+            new Claim("TokenType", "Refresh")
+        }),
                 Expires = refreshExpires,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(refreshKey), SecurityAlgorithms.HmacSha256Signature),
                 Issuer = "HITS",
                 Audience = "HITS"
             };
+
             var refreshToken = tokenHandler.CreateToken(refreshDescriptor);
             var refreshTokenString = tokenHandler.WriteToken(refreshToken);
 
-            return new TokenResponse
+            TokenModel token = new TokenModel
             {
-                AccessToken = accessTokenString,
-                RefreshToken = refreshTokenString
+                Token = refreshTokenString,
+                Expires = refreshExpires
             };
+
+            return token;
         }
+
+/*        public async Task<TokenModel> RefreshAccessToken(string refreshToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = "HITS",
+                ValidateAudience = true,
+                ValidAudience = "HITS",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_refreshSecret))
+            };
+
+            SecurityToken validatedToken;
+            var principal = tokenHandler.ValidateToken(refreshToken, validationParameters, out validatedToken);
+            var userId = principal.FindFirst(ClaimTypes.Name)?.Value;
+
+            // Генерация нового access токена
+            var newAccessToken = await GenerateAccessToken(new Guid(userId), "user");
+
+            return newAccessToken;
+        }*/
     }
 }
 

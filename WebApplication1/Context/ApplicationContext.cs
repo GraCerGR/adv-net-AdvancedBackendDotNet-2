@@ -15,6 +15,8 @@ namespace WebApplication1.Context
 
         public DbSet<EditPasswordCode> Codes { get; set; }
 
+        public DbSet<RefreshTokenModel> RefreshTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserModel>().HasKey(x => x.Id);
@@ -22,6 +24,8 @@ namespace WebApplication1.Context
             modelBuilder.Entity<ManagerModel>().HasKey(x => x.Id);
             //modelBuilder.Entity<ManagerModel>().HasIndex(x => new { x.UserId}).IsUnique();
             modelBuilder.Entity<EditPasswordCode>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<RefreshTokenModel>().HasKey(x => x.Id);
         }
     }
 }
