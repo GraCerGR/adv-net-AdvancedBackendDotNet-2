@@ -7,7 +7,7 @@ namespace Document_Service.Models
         [Key]
         public Guid Id { get; set; }
 
-        public string FileName { get; set; }
+        //public string FileName { get; set; }
 
         public string PathToFile { get; set; }
 

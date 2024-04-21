@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IManageFile, ManageFile>();
+builder.Services.AddTransient<IManageFileService, ManageFileService>();
 
 var app = builder.Build();
 

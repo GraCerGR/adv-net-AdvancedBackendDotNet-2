@@ -12,7 +12,7 @@ namespace Document_Service.Models.DTO
         public string Birthplace { get; set; }
 
         [Required]
-        public DataType WhenIssued { get; set; }
+        public DateTime WhenIssued { get; set; }
 
         [Required]
         public string IssuedByWhom { get; set; }
