@@ -4,6 +4,7 @@ using Document_Service.Services;
 
 namespace Document_Service.Controllers
 {
+    [Route("document/[controller]")]
     [ApiController]
     public class FileManagerController : ControllerBase
     {

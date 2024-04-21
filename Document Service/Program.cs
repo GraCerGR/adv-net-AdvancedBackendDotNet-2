@@ -1,8 +1,11 @@
 using Document_Service.Services.Interfaces;
 using Document_Service.Services;
+using Microsoft.EntityFrameworkCore;
+using WebApplication1.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
 
