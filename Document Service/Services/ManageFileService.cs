@@ -18,7 +18,7 @@ namespace Document_Service.Services
         {
             _context = context;
         }
-        public async Task<string> UploadFile(IFormFile _IFormFile, FileTypes fileType, PassportDto passport, Guid UserId)
+        public async Task<string> UploadFile(IFormFile _IFormFile, FileTypes fileType, Guid UserId, PassportDto passport, string educationType)
         {
 
 /*            var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Email == credentials.Email);
@@ -29,21 +29,13 @@ namespace Document_Service.Services
                 ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "User not exists");
                 throw ex;
             }*/
-
-             var prevPassport = await _context.PassportFiles.FirstOrDefaultAsync(x => x.UserId == UserId);
-            if (prevPassport != null)
-            {
-                File.Delete(prevPassport.PathToFile);
-                _context.PassportFiles.Remove(prevPassport);
-                await _context.SaveChangesAsync();
-            }
             
             //-------------------------Загрузка файла----------------------
             string FileName = "";
             try
             {
                 FileInfo _FileInfo = new FileInfo(_IFormFile.FileName);
-                FileName = _IFormFile.FileName + "_" + DateTime.Now.Ticks.ToString() + _FileInfo.Extension;
+                FileName = DateTime.Now.Ticks.ToString()  + "_" + _IFormFile.FileName;
                 var _GetFilePath = Common.GetFilePath(FileName);
                 using (var _FileStream = new FileStream(_GetFilePath, FileMode.Create))
                 {
@@ -54,6 +46,14 @@ namespace Document_Service.Services
 
                 if (fileType == FileTypes.Passport)
                 {
+                    var prevPassport = await _context.PassportFiles.FirstOrDefaultAsync(x => x.UserId == UserId);
+                    if (prevPassport != null)
+                    {
+                        File.Delete(prevPassport.PathToFile);
+                        _context.PassportFiles.Remove(prevPassport);
+                        await _context.SaveChangesAsync();
+                    }
+
                     FilePassportModel passportFile = new FilePassportModel
                     {
                         Id = Guid.NewGuid(),
@@ -69,6 +69,29 @@ namespace Document_Service.Services
 
                 }
 
+                //--------------------------------------------------------
+
+                if (fileType == FileTypes.EducationFile)
+                {
+                    var prevEducation = await _context.EducationFiles.FirstOrDefaultAsync(x => x.UserId == UserId/* && x.DocumentTypes == educationType*/);
+                    if (prevEducation != null)
+                    {
+                        File.Delete(prevEducation.PathToFile);
+                        _context.EducationFiles.Remove(prevEducation);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    FileEducationModel educationFile = new FileEducationModel
+                    {
+                        Id = Guid.NewGuid(),
+                        PathToFile = _GetFilePath,
+                        UserId = UserId,
+                        DocumentTypes = educationType,
+                    };
+                    await _context.EducationFiles.AddAsync(educationFile);
+                    await _context.SaveChangesAsync();
+
+                }
 
                 return FileName;
             }

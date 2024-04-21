@@ -21,17 +21,17 @@ namespace Document_Service.Controllers
         [Route("uploadPassport")]
         public async Task<IActionResult> UploadPassportFile(IFormFile _IFormFile, [FromForm] PassportDto passport,[Required] Guid UserId)
         {
-            var result = await _iManageFile.UploadFile(_IFormFile, FileTypes.Passport, passport, UserId);
+            var result = await _iManageFile.UploadFile(_IFormFile, FileTypes.Passport, UserId, passport, null);
             return Ok(result);
         }
 
-        /*        [HttpPost]
-                [Route("uploadEducation")]
-                public async Task<IActionResult> UploadEducationFile(IFormFile _IFormFile)
-                {
-                    var result = await _iManageFile.UploadFile(_IFormFile);
-                    return Ok(result);
-                }*/
+        [HttpPost]
+        [Route("uploadEducation")]
+        public async Task<IActionResult> UploadEducationFile(IFormFile _IFormFile, [Required] Guid UserId, [Required] string type)
+        {
+            var result = await _iManageFile.UploadFile(_IFormFile, FileTypes.EducationFile, UserId, null, type);
+            return Ok(result);
+        }
 
         [HttpGet]
         [Route("downloadfile")]
