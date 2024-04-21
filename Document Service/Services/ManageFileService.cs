@@ -6,6 +6,8 @@ using Document_Service.Models.DTO;
 using Document_Service.Models;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Context;
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Document_Service.Services
 {
@@ -73,13 +75,13 @@ namespace Document_Service.Services
 
                 if (fileType == FileTypes.EducationFile)
                 {
-                    var prevEducation = await _context.EducationFiles.FirstOrDefaultAsync(x => x.UserId == UserId/* && x.DocumentTypes == educationType*/);
+/*                    var prevEducation = await _context.EducationFiles.FirstOrDefaultAsync(x => x.UserId == UserId*//* && x.DocumentTypes == educationType*//*);
                     if (prevEducation != null)
                     {
                         File.Delete(prevEducation.PathToFile);
                         _context.EducationFiles.Remove(prevEducation);
                         await _context.SaveChangesAsync();
-                    }
+                    }*/
 
                     FileEducationModel educationFile = new FileEducationModel
                     {
@@ -100,6 +102,30 @@ namespace Document_Service.Services
                 throw ex;
             }
         }
+
+        public async Task<string> DeleteFile(string FileName, Guid UserId, string educationType)
+        {
+            try
+            {
+                var prevEducation = await _context.EducationFiles.FirstOrDefaultAsync(x => x.UserId == UserId && x.DocumentTypes == educationType && x.PathToFile.Contains(FileName));
+                if (prevEducation != null)
+                {
+                    File.Delete(prevEducation.PathToFile);
+                    _context.EducationFiles.Remove(prevEducation);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new Exception("File don't exist");
+                }
+                return("Ok");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<(byte[], string, string)> DownloadFile(string FileName)
         {
             try

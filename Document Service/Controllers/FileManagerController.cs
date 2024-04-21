@@ -33,6 +33,14 @@ namespace Document_Service.Controllers
             return Ok(result);
         }
 
+        [HttpDelete]
+        [Route("uploadEducation")]
+        public async Task<IActionResult> DeleteFile(string FileName, [Required] Guid UserId, string type)
+        {
+            var result = await _iManageFile.DeleteFile(FileName, UserId, type);
+            return Ok(result);
+        }
+
         [HttpGet]
         [Route("downloadfile")]
         public async Task<IActionResult> DownloadFile(string FileName)
