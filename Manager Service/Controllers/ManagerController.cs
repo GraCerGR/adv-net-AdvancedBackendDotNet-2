@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
-using Manager_Service.Models;
 using WebApplication1.Services.Interfaces;
+using Manager_Service.Models;
 
-namespace WebApplication1.Controllers
+namespace Manager_Service
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ManagerController: ControllerBase
+    public class ManagerController : ControllerBase
     {
         private readonly IManagerService _managerService;
 
