@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Handbook_Service.Models
 {
     public class FacultyModel
     {
-        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Required]
         public Guid Id { get; set; }
 

@@ -27,6 +27,21 @@ namespace WebApplication1.Services
         {
             var faculties = await FetchEducationLevels("faculties");
             var facultiesList = JsonConvert.DeserializeObject<List<FacultyModel>>(faculties);
+
+            _context.Faculties.RemoveRange(_context.Faculties);
+            await _context.SaveChangesAsync();
+
+            foreach (var faculty in facultiesList)
+            {
+                _context.Faculties.Add(new FacultyModel
+                {
+                    Id = faculty.Id,
+                    CreateTime = faculty.CreateTime.ToUniversalTime(),
+                    Name = faculty.Name
+                });
+            }
+
+            await _context.SaveChangesAsync();
             return facultiesList;
         }
 
@@ -34,6 +49,21 @@ namespace WebApplication1.Services
         {
             var educationLevels = await FetchEducationLevels("education_levels");
             var educationLevelsList = JsonConvert.DeserializeObject<List<EducationLevelModel>>(educationLevels);
+
+            _context.EducationLevels.RemoveRange(_context.EducationLevels);
+            await _context.SaveChangesAsync();
+
+            foreach (var educationLevel in educationLevelsList)
+            {
+                _context.EducationLevels.Add(new EducationLevelModel
+                {
+                    Id = educationLevel.Id,
+                    Name = educationLevel.Name
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
             return educationLevelsList;
         }
 

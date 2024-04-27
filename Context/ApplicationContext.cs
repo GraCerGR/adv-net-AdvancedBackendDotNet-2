@@ -19,7 +19,7 @@ namespace Handbook_Service.Context
         {
             modelBuilder.Entity<FacultyModel>().HasKey(x => x.Id);
 
-            modelBuilder.Entity<EducationLevelModel>().HasKey(x => x.Id);
+            /*modelBuilder.Entity<EducationLevelModel>().HasKey(x => x.Id);*/
         }
 
     }
