@@ -19,16 +19,16 @@ namespace Handbook_Service.Controllers
             _handbookService = handbookService;
         }
 
-        [HttpPost("EducationLevels")]
-        [Authorize(Roles = "Admin")]
+        [HttpGet("EducationLevels")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportEducationLevels()
         {
             var educationLevels = await _handbookService.GetEducationLevels();
             return Ok(educationLevels);
         }
 
-        [HttpPost("Faculties")]
-        [Authorize(Roles = "Admin")]
+        [HttpGet("Faculties")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportFaculties()
         {
             var faculties = await _handbookService.GetFaculties();

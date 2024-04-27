@@ -6,7 +6,7 @@ namespace Handbook_Service.Models
     {
         [Key]
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public DateTime CreateTime { get; set; }
 

@@ -10,6 +10,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Handbook_Service.Models;
 using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace WebApplication1.Services
 {
@@ -22,16 +23,18 @@ namespace WebApplication1.Services
             _context = context;
         }
 
-        public async Task<string> GetFaculties()
+        public async Task<List<FacultyModel>> GetFaculties()
         {
             var faculties = await FetchEducationLevels("faculties");
-            return faculties;
+            var facultiesList = JsonConvert.DeserializeObject<List<FacultyModel>>(faculties);
+            return facultiesList;
         }
 
-        public async Task<string> GetEducationLevels()
+        public async Task<List<EducationLevelModel>> GetEducationLevels()
         {
             var educationLevels = await FetchEducationLevels("education_levels");
-            return educationLevels;
+            var educationLevelsList = JsonConvert.DeserializeObject<List<EducationLevelModel>>(educationLevels);
+            return educationLevelsList;
         }
 
         public async Task<string> FetchEducationLevels(string endpoint)
