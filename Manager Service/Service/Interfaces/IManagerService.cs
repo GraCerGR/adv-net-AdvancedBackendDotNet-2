@@ -1,5 +1,5 @@
 ﻿using Manager_Service.Models;
-using WebApplication1.Models.DTO;
+using Manager_Service.Models.DTO;
 
 namespace WebApplication1.Services.Interfaces
 {

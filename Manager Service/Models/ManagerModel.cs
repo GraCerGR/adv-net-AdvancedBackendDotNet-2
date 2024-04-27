@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebApplication1.Models.DTO;
+using Manager_Service.Models.DTO;
 
 namespace Manager_Service.Models
 {
