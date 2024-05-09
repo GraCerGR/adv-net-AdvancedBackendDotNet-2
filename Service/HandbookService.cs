@@ -116,14 +116,51 @@ namespace WebApplication1.Services
                         skip++;
                     }
                 }
-
+                Console.WriteLine($"{page} out of {count} were imported");
                 await _context.SaveChangesAsync();
-                Console.WriteLine($"{page-skip} out of {count} were imported");
+                Console.WriteLine($"{skip} were skipped");
                 page++;
 
             } while (page <= count);
 
             return programPagedList.Programs;
+        }
+
+        public async Task<List<EducationDocumentTypeModel>> GetDocumentType()
+        {
+            var documentType = await FetchImport("document_types");
+            var documentTypeList = JsonConvert.DeserializeObject<List<EducationDocumentTypeModel>>(documentType);
+
+            _context.EducationDocumentTypes.RemoveRange(_context.EducationDocumentTypes);
+            await _context.SaveChangesAsync();
+
+            foreach (var document in documentTypeList)
+            {
+/*                var existingEducationLevel = _context.EducationLevels.FirstOrDefault(el => el.Id == document.EducationLevel.Id);
+                var sdfs = document.EducationLevel.Id;
+                var existingNextEducationLevels = new List<EducationLevelModel>();
+
+                foreach (var nextLevel in document.NextEducationLevels)
+                {
+                    var existingNextEducationLevel = _context.EducationLevels.FirstOrDefault(el => el.Id == nextLevel.Id);
+                    if (existingNextEducationLevel == null)
+                    {
+                    }
+                }*/
+
+                _context.EducationDocumentTypes.Add(new EducationDocumentTypeModel
+                {
+                    Id = document.Id,
+                    CreateTime = document.CreateTime.ToUniversalTime(),
+                    Name = document.Name,
+                    EducationLevel = document.EducationLevel,
+                    //NextEducationLevels = document.NextEducationLevels
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            return documentTypeList;
         }
 
         public async Task<string> FetchImport(string endpoint)

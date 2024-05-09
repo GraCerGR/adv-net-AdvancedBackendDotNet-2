@@ -16,6 +16,8 @@ namespace Handbook_Service.Context
 
         public DbSet<EducationProgramModel> EducationPrograms { get; set; }
 
+        public DbSet<EducationDocumentTypeModel> EducationDocumentTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<FacultyModel>().HasKey(x => x.Id);

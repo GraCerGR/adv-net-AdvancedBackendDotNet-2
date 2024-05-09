@@ -9,5 +9,6 @@ namespace Handbook_Service.Services.Interfaces
         Task<List<FacultyModel>> GetFaculties();
         Task<List<EducationLevelModel>> GetEducationLevels();
         Task<List<EducationProgramModel>> GetPrograms();
+        Task<List<EducationDocumentTypeModel>> GetDocumentType();
     }
 }

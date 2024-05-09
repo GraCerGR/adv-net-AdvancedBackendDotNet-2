@@ -42,5 +42,13 @@ namespace Handbook_Service.Controllers
             var programs = await _handbookService.GetPrograms();
             return Ok(programs);
         }
+
+        [HttpGet("DocumentTypes")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ImportDocumentTypes()
+        {
+            var programs = await _handbookService.GetDocumentType();
+            return Ok(programs);
+        }
     }
 }

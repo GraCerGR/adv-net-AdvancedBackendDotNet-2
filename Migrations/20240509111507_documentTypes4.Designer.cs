@@ -3,6 +3,7 @@ using System;
 using Handbook_Service.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Handbook_Service.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240509111507_documentTypes4")]
+    partial class documentTypes4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,11 +52,16 @@ namespace Handbook_Service.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("EducationDocumentTypeModelId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EducationDocumentTypeModelId");
 
                     b.ToTable("EducationLevels");
                 });
@@ -125,6 +133,13 @@ namespace Handbook_Service.Migrations
                     b.Navigation("EducationLevel");
                 });
 
+            modelBuilder.Entity("Handbook_Service.Models.EducationLevelModel", b =>
+                {
+                    b.HasOne("Handbook_Service.Models.EducationDocumentTypeModel", null)
+                        .WithMany("NextEducationLevels")
+                        .HasForeignKey("EducationDocumentTypeModelId");
+                });
+
             modelBuilder.Entity("Handbook_Service.Models.EducationProgramModel", b =>
                 {
                     b.HasOne("Handbook_Service.Models.EducationLevelModel", "EducationLevel")
@@ -142,6 +157,11 @@ namespace Handbook_Service.Migrations
                     b.Navigation("EducationLevel");
 
                     b.Navigation("Faculty");
+                });
+
+            modelBuilder.Entity("Handbook_Service.Models.EducationDocumentTypeModel", b =>
+                {
+                    b.Navigation("NextEducationLevels");
                 });
 #pragma warning restore 612, 618
         }
