@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Handbook_Service.Models;
 using System.Text.Json;
 using Newtonsoft.Json;
+using System.Drawing;
+using System.Diagnostics.Metrics;
 
 namespace WebApplication1.Services
 {
@@ -25,7 +27,7 @@ namespace WebApplication1.Services
 
         public async Task<List<FacultyModel>> GetFaculties()
         {
-            var faculties = await FetchEducationLevels("faculties");
+            var faculties = await FetchImport("faculties");
             var facultiesList = JsonConvert.DeserializeObject<List<FacultyModel>>(faculties);
 
             _context.Faculties.RemoveRange(_context.Faculties);
@@ -47,7 +49,7 @@ namespace WebApplication1.Services
 
         public async Task<List<EducationLevelModel>> GetEducationLevels()
         {
-            var educationLevels = await FetchEducationLevels("education_levels");
+            var educationLevels = await FetchImport("education_levels");
             var educationLevelsList = JsonConvert.DeserializeObject<List<EducationLevelModel>>(educationLevels);
 
             _context.EducationLevels.RemoveRange(_context.EducationLevels);
@@ -67,7 +69,64 @@ namespace WebApplication1.Services
             return educationLevelsList;
         }
 
-        public async Task<string> FetchEducationLevels(string endpoint)
+        public async Task<List<EducationProgramModel>> GetPrograms()
+        {
+            int count = 0;
+            int page = 1;
+            int size = 1;
+            int skip = 0;
+            ProgramPagedListModel programPagedList;
+
+            _context.EducationPrograms.RemoveRange(_context.EducationPrograms);
+            await _context.SaveChangesAsync();
+
+            do
+            {
+                var response = await FetchImport($"programs?page={page}&size={size}");
+                programPagedList = JsonConvert.DeserializeObject<ProgramPagedListModel>(response);
+
+                if (count == 0)
+                {
+                    count = programPagedList.Pagination.Count;
+                }
+
+                foreach (var program in programPagedList.Programs)
+                {
+                    var existingFaculty = _context.Faculties.FirstOrDefault(f => f.Id == program.Faculty.Id);
+                    var existingEducationLevel = _context.EducationLevels.FirstOrDefault(el => el.Id == program.EducationLevel.Id);
+
+                    if (existingFaculty != null && existingEducationLevel != null)
+                    {
+                        _context.EducationPrograms.Add(new EducationProgramModel
+                        {
+                            Id = program.Id,
+                            CreateTime = program.CreateTime.ToUniversalTime(),
+                            Name = program.Name,
+                            Code = program.Code,
+                            Language = program.Language,
+                            EducationForm = program.EducationForm,
+                            Faculty = existingFaculty,
+                            EducationLevel = existingEducationLevel
+                        });
+                    }
+                    else
+                    {
+                        if (existingFaculty == null) Console.WriteLine("This faculty is not loaded. Please import the new faculty database");
+                        if (existingEducationLevel == null) Console.WriteLine("This level of education is not loaded. Please import a new database of education levels");
+                        skip++;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                Console.WriteLine($"{page-skip} out of {count} were imported");
+                page++;
+
+            } while (page <= count);
+
+            return programPagedList.Programs;
+        }
+
+        public async Task<string> FetchImport(string endpoint)
         {
             string url = $"https://1c-mockup.kreosoft.space/api/dictionary/{endpoint}";
             string token = "Basic c3R1ZGVudDpueTZnUW55bjRlY2JCclA5bDFGeg==";

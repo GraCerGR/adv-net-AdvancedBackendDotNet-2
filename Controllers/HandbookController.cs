@@ -34,5 +34,13 @@ namespace Handbook_Service.Controllers
             var faculties = await _handbookService.GetFaculties();
             return Ok(faculties);
         }
+
+        [HttpGet("Programs")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ImportPrograms()
+        {
+            var programs = await _handbookService.GetPrograms();
+            return Ok(programs);
+        }
     }
 }
