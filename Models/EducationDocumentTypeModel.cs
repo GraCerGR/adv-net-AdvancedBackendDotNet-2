@@ -16,6 +16,8 @@ namespace Handbook_Service.Models
 
         [Required]
         public EducationLevelModel EducationLevel { get; set; }
-        //public List<EducationLevelModel> NextEducationLevels { get; set; }
+
+        [NotMapped]
+        public List<EducationLevelModel> NextEducationLevels { get; set; }
     }
 }

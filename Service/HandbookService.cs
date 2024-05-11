@@ -44,7 +44,7 @@ namespace WebApplication1.Services
             }
 
             await _context.SaveChangesAsync();
-            return facultiesList;
+            return await _context.Faculties.ToListAsync();
         }
 
         public async Task<List<EducationLevelModel>> GetEducationLevels()
@@ -66,10 +66,10 @@ namespace WebApplication1.Services
 
             await _context.SaveChangesAsync();
 
-            return educationLevelsList;
+            return await _context.EducationLevels.ToListAsync();
         }
 
-        public async Task<List<EducationProgramModel>> GetPrograms()
+        public async Task<string> GetPrograms()
         {
             int count = 0;
             int page = 1;
@@ -123,7 +123,7 @@ namespace WebApplication1.Services
 
             } while (page <= count);
 
-            return programPagedList.Programs;
+            return $"{page-1} out of {count} were imported, {skip} program(s) were skipped";
         }
 
         public async Task<List<EducationDocumentTypeModel>> GetDocumentType()
@@ -136,31 +136,33 @@ namespace WebApplication1.Services
 
             foreach (var document in documentTypeList)
             {
-/*                var existingEducationLevel = _context.EducationLevels.FirstOrDefault(el => el.Id == document.EducationLevel.Id);
-                var sdfs = document.EducationLevel.Id;
+                var existingEducationLevel = _context.EducationLevels.FirstOrDefault(f => f.Id == document.EducationLevel.Id);
+      
                 var existingNextEducationLevels = new List<EducationLevelModel>();
 
                 foreach (var nextLevel in document.NextEducationLevels)
                 {
                     var existingNextEducationLevel = _context.EducationLevels.FirstOrDefault(el => el.Id == nextLevel.Id);
-                    if (existingNextEducationLevel == null)
+                    if (existingNextEducationLevel != null)
                     {
+                        existingNextEducationLevels.Add(existingNextEducationLevel);
                     }
-                }*/
+                    else Console.WriteLine("This level of education is not loaded. Please import a new database of education levels");
+                }
 
                 _context.EducationDocumentTypes.Add(new EducationDocumentTypeModel
                 {
                     Id = document.Id,
                     CreateTime = document.CreateTime.ToUniversalTime(),
                     Name = document.Name,
-                    EducationLevel = document.EducationLevel,
-                    //NextEducationLevels = document.NextEducationLevels
+                    EducationLevel = existingEducationLevel,
+                    NextEducationLevels = existingNextEducationLevels
                 });
             }
 
             await _context.SaveChangesAsync();
 
-            return documentTypeList;
+            return await _context.EducationDocumentTypes.ToListAsync();
         }
 
         public async Task<string> FetchImport(string endpoint)

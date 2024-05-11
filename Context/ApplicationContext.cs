@@ -25,6 +25,7 @@ namespace Handbook_Service.Context
             //modelBuilder.Entity<EducationProgramModel>().HasKey(x => x.Id);
 
             /*modelBuilder.Entity<EducationLevelModel>().HasKey(x => x.Id);*/
+
         }
 
     }
