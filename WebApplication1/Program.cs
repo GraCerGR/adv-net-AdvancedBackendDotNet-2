@@ -28,7 +28,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 //builder.Services.AddScoped<ITokenService, TokenService>();
 //builder.Services.AddScoped<ITokenService>(s => new TokenService(jwtSecret, refreshSecret));
 
-builder.Services.AddHostedService<NotificationService>();
+//----------------Отделил уведомления-----------------------
+//builder.Services.AddHostedService<NotificationService>();
 
 builder.Services.AddControllers();
 
