@@ -1,5 +1,5 @@
 ﻿using Manager_Service.Context;
-using WebApplication1.Services.Interfaces;
+using Manager_Service.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Manager_Service.Models.DTO;
 using Manager_Service.Models;
 
-namespace WebApplication1.Services
+namespace Manager_Service.Services
 {
     public class ManagerService : IManagerService
     {

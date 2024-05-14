@@ -1,7 +1,7 @@
 ﻿using Manager_Service.Models;
 using Manager_Service.Models.DTO;
 
-namespace WebApplication1.Services.Interfaces
+namespace Manager_Service.Services.Interfaces
 {
     public interface IManagerService
     {

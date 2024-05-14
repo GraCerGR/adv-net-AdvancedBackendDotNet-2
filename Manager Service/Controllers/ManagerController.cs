@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Services.Interfaces;
+using Manager_Service.Services.Interfaces;
 using Manager_Service.Models;
 
 namespace Manager_Service
@@ -19,7 +19,7 @@ namespace Manager_Service
 
 
         [HttpPost("manager")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<ManagerCreateModel[]> CreateManagers(ManagerCreateModel[] managerCreateModel)
         {
             return await _managerService.CreateManagers(managerCreateModel);
