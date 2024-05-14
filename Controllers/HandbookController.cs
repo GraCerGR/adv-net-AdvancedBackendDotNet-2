@@ -20,7 +20,7 @@ namespace Handbook_Service.Controllers
         }
 
         [HttpGet("EducationLevels")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportEducationLevels()
         {
             var educationLevels = await _handbookService.GetEducationLevels();
@@ -28,7 +28,7 @@ namespace Handbook_Service.Controllers
         }
 
         [HttpGet("Faculties")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportFaculties()
         {
             var faculties = await _handbookService.GetFaculties();
@@ -36,7 +36,7 @@ namespace Handbook_Service.Controllers
         }
 
         [HttpGet("Programs")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportPrograms()
         {
             var programs = await _handbookService.GetPrograms();
@@ -44,7 +44,7 @@ namespace Handbook_Service.Controllers
         }
 
         [HttpGet("DocumentTypes")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportDocumentTypes()
         {
             var programs = await _handbookService.GetDocumentType();
