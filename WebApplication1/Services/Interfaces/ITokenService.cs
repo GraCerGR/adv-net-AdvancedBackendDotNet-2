@@ -1,6 +1,6 @@
-﻿using WebApplication1.Models;
+﻿using User_Service.Models;
 
-namespace WebApplication1.Services.Interfaces
+namespace User_Service.Services.Interfaces
 {
     public interface ITokenService
     {
@@ -8,6 +8,6 @@ namespace WebApplication1.Services.Interfaces
 
         Task<TokenModel> GenerateRefreshToken(Guid userId, string role);
 
-/*        Task<TokenModel> RefreshAccessToken(string refreshToken);*/
+        Task<string> RefreshAccessToken(string refreshToken);
     }
 }

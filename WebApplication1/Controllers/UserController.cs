@@ -2,11 +2,11 @@
 using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Context;
-using WebApplication1.Models;
-using WebApplication1.Models.DTO;
-using WebApplication1.Services;
-using WebApplication1.Services.Interfaces;
+using User_Service.Context;
+using User_Service.Models;
+using User_Service.Models.DTO;
+using User_Service.Services;
+using User_Service.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -39,7 +39,7 @@ namespace WebApplication1.Controllers
 
 
         [HttpGet("profile")]
-        [Authorize]
+        /*[Authorize]*/
         public async Task<UserDto> GetProfile()
         {
                 string authorizationHeader = Request.Headers["Authorization"];

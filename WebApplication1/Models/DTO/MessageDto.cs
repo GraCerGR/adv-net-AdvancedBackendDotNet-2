@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Models.DTO
+﻿namespace User_Service.Models.DTO
 {
     public class MessageDto
     {

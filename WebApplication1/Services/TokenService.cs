@@ -2,10 +2,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WebApplication1.Models;
-using WebApplication1.Services.Interfaces;
+using User_Service.Models;
+using User_Service.Services.Interfaces;
 
-namespace WebApplication1.Services
+namespace User_Service.Services
 {
     public class TokenService : ITokenService
     {
@@ -81,9 +81,16 @@ namespace WebApplication1.Services
             return token;
         }
 
-/*        public async Task<TokenModel> RefreshAccessToken(string refreshToken)
+        public async Task<string> RefreshAccessToken(string refreshToken)
         {
+            
+
+            
+
             var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(refreshToken);
+            string role = jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+
             var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -98,10 +105,10 @@ namespace WebApplication1.Services
             var userId = principal.FindFirst(ClaimTypes.Name)?.Value;
 
             // Генерация нового access токена
-            var newAccessToken = await GenerateAccessToken(new Guid(userId), "user");
+            var newAccessToken = await GenerateAccessToken(new Guid(userId), role);
 
-            return newAccessToken;
-        }*/
+            return newAccessToken.Token;
+        }
     }
 }
 

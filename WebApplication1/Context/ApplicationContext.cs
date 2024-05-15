@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
+using User_Service.Models;
 
-namespace WebApplication1.Context
+namespace User_Service.Context
 {
     public class ApplicationContext : DbContext
     {

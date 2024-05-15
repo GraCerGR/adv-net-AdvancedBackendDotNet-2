@@ -1,8 +1,8 @@
 ﻿using System.Net;
-using WebApplication1.Models;
+using User_Service.Models;
 using Newtonsoft.Json;
 
-namespace WebApplication1.Services
+namespace User_Service.Services
 {
     public static class MiddlewareExtensions
     {

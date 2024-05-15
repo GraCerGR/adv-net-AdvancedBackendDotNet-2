@@ -2,13 +2,13 @@
 using RabbitMQ.Client;
 using System.Text;
 using Newtonsoft.Json;
-using WebApplication1.Models.DTO;
-using WebApplication1.Context;
-using WebApplication1.Services.Interfaces;
+using User_Service.Models.DTO;
+using User_Service.Context;
+using User_Service.Services.Interfaces;
 using System.Net.Mail;
 using System.Net;
 
-namespace WebApplication1.Services
+namespace User_Service.Services
 {
     public class NotificationService : BackgroundService
     {

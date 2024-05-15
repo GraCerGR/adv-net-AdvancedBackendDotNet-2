@@ -1,6 +1,6 @@
-﻿using WebApplication1.Context;
-using WebApplication1.Models;
-using WebApplication1.Services.Interfaces;
+﻿using User_Service.Context;
+using User_Service.Models;
+using User_Service.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,9 +9,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.Models.DTO;
+using User_Service.Models.DTO;
 
-namespace WebApplication1.Services
+namespace User_Service.Services
 {
     public class ManagerService : IManagerService
     {

@@ -1,7 +1,7 @@
-﻿using WebApplication1.Models;
-using WebApplication1.Models.DTO;
+﻿using User_Service.Models;
+using User_Service.Models.DTO;
 
-namespace WebApplication1.Services.Interfaces
+namespace User_Service.Services.Interfaces
 {
     public interface INotificationService
     {

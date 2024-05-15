@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebApplication1.Models.DTO;
+using User_Service.Models.DTO;
 
-namespace WebApplication1.Models
+namespace User_Service.Models
 {
     public class ManagerModel
     {

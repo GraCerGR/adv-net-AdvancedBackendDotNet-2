@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WebApplication1.Models
+namespace User_Service.Models
 {
     
         [JsonConverter(typeof(JsonStringEnumConverter))]

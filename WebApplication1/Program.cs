@@ -1,11 +1,11 @@
-using WebApplication1.Context;
+using User_Service.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using WebApplication1.Services.Interfaces;
-using WebApplication1.Services;
+using User_Service.Services.Interfaces;
+using User_Service.Services;
 using RabbitMQ.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +21,7 @@ builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(b
 //builder.Services.AddSingleton<ITokenService>(new TokenService(jwtSecret, refreshSecret));
 //builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddSingleton(provider => new TokenService(jwtSecret, refreshSecret));
+builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<IUserService, UserService>();
 //builder.Services.AddScoped<IManagerService, ManagerService>();
 
@@ -88,7 +89,9 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+
 app.UseExceptionHandlerMiddleware();
+app.UseMiddleware<TokenMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WebApplication1.Context;
+using User_Service.Context;
 
 #nullable disable
 
-namespace WebApplication1.Migrations
+namespace User_Service.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
     [Migration("20240409144500_code1")]
