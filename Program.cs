@@ -1,7 +1,7 @@
 using Handbook_Service.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Services;
+using Handbook_Service.Services;
 using Handbook_Service.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;

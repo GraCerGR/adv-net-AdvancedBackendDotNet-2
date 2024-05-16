@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 using System.Drawing;
 using System.Diagnostics.Metrics;
 
-namespace WebApplication1.Services
+namespace Handbook_Service.Services
 {
     public class HandbookService : IHandbookService
     {
