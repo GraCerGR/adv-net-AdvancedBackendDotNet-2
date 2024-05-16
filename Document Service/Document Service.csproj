@@ -30,4 +30,8 @@
     <Folder Include="Uploads\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\WebApplication1\WebApplication1\User Service.csproj" />
+  </ItemGroup>
+
 </Project>

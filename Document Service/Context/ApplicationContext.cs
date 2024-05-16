@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Document_Service.Models;
 
-namespace WebApplication1.Context
+namespace Document_Service.Context
 {
     public class ApplicationContext : DbContext
     {

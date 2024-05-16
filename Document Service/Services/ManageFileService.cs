@@ -5,7 +5,7 @@ using Document_Service.Helper;
 using Document_Service.Models.DTO;
 using Document_Service.Models;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Context;
+using Document_Service.Context;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -16,7 +16,7 @@ namespace Document_Service.Services
 
         private readonly ApplicationContext _context;
 
-        public ManageFileService(ApplicationContext context)
+        public ManageFileService(Document_Service.Context.ApplicationContext context)
         {
             _context = context;
         }
@@ -63,7 +63,7 @@ namespace Document_Service.Services
                         UserId = UserId,
                         SeriesNumber = passport.SeriesNumber,
                         Birthplace = passport.Birthplace,
-                        WhenIssued = passport.WhenIssued,
+                        WhenIssued = passport.WhenIssued.ToUniversalTime(),
                         IssuedByWhom = passport.IssuedByWhom
                     };
                     await _context.PassportFiles.AddAsync(passportFile);
