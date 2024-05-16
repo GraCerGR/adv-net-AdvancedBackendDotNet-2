@@ -39,7 +39,7 @@ namespace WebApplication1.Controllers
 
 
         [HttpGet("profile")]
-        /*[Authorize]*/
+        [Authorize]
         public async Task<UserDto> GetProfile()
         {
                 string authorizationHeader = Request.Headers["Authorization"];

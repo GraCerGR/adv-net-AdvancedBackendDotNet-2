@@ -30,7 +30,7 @@ namespace User_Service.Services
             if (accessToken != null)
             {
                 var token = new JwtSecurityTokenHandler().ReadToken(accessToken) as JwtSecurityToken;
-                if (token != null)
+                if (token.ValidTo.Subtract(DateTime.UtcNow) < TimeSpan.FromSeconds(0))
                 {
                     string refreshToken = context.Request.Headers["Refresh-Token"];
 
