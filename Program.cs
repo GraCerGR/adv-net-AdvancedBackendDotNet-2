@@ -7,13 +7,23 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using User_Service.Services;
+using User_Service.Services.Interfaces;
+using User_Service;
+using Microsoft.Extensions.Configuration;
+using User_Service.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<Handbook_Service.Context.ApplicationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<User_Service.Context.ApplicationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Configuration.AddJsonFile("appsettings.json");
+string jwtSecret = builder.Configuration["TokenSettings:JwtSecret"];
+string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];
 // Add services to the container.
 builder.Services.AddScoped<IHandbookService, HandbookService>();
+builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -69,6 +79,10 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+app.UseExceptionHandlerMiddleware();
+app.UseMiddleware<TokenMiddleware>();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
