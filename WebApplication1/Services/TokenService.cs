@@ -1,7 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using User_Service.Context;
 using User_Service.Models;
 using User_Service.Services.Interfaces;
 
@@ -83,9 +85,6 @@ namespace User_Service.Services
 
         public async Task<string> RefreshAccessToken(string refreshToken)
         {
-            
-
-            
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(refreshToken);

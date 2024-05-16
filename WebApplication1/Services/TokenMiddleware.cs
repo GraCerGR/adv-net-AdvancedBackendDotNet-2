@@ -3,6 +3,9 @@ using User_Service.Models;
 using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using User_Service.Services.Interfaces;
+using User_Service.Context;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 namespace User_Service.Services
 {
@@ -31,21 +34,31 @@ namespace User_Service.Services
                 {
                     string refreshToken = context.Request.Headers["Refresh-Token"];
 
-
                     using (var scope = context.RequestServices.CreateScope())
                     {
                         var userService = scope.ServiceProvider.GetRequiredService<ITokenService>();
 
-                        try
+                        ApplicationContext _context = context.RequestServices.GetRequiredService<ApplicationContext>();
+
+                        var user = await _context.RefreshTokens.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+                        if (user == null || user.Expires <= DateTime.UtcNow)
                         {
-                            var newToken = await userService.RefreshAccessToken(refreshToken);
-                            context.Response.Headers.Add("Authorization", "Bearer " + newToken);
-                        }
-                        catch (Exception ex)
-                        {
-                            ex.Data.Add(StatusCodes.Status400BadRequest.ToString(), "Bad Request");
+                            var ex = new Exception();
+                            ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "The token is invalid");
                             throw ex;
                         }
+
+                        var existingUser = _context.Users.FirstOrDefaultAsync(u => u.Id == user.UserId);
+
+                        if (existingUser == null)
+                        {
+                            var ex = new Exception();
+                            ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "The user was not found");
+                            throw ex;
+                        }
+                        var newToken = await userService.RefreshAccessToken(refreshToken);
+                        context.Response.Headers.Add("Authorization", "Bearer " + newToken);
                     }
 /*                    try
                     {
