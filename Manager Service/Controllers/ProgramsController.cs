@@ -30,22 +30,36 @@ namespace Manager_Service.Controllers
 
         [HttpPost("queue")]
         [Authorize]
-        public async Task CreateQueuePrograms(Guid? userId, List<Guid> programs)
+        public async Task CreateQueuePrograms(List<Guid> programs)
         {
             
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
-            // если userId введён, то проверка прав, что id в Authorize является Менеджером пользователя userId
+
             // Если userId не введён, то userId = id из Authorize
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _programsService.CreateQueuePrograms(userId ?? AuthorizeuserId.ToGuid(), programs);
+            await _programsService.CreateQueuePrograms(AuthorizeuserId.ToGuid(), programs);
+        }
+
+        [HttpPost("queue/{userId}")]
+        [Authorize(Roles = "Manager, MainManager, Admin")]
+        public async Task CreateQueuePrograms(Guid userId, List<Guid> programs)
+        {
+
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+            // если userId введён, то проверка прав, что id в Authorize является Менеджером пользователя userId
+
+            var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
+
+            await _programsService.CreateQueuePrograms(userId, programs);
         }
 
         [HttpGet("queue")]
         [Authorize]
-        public async Task<IQueryable<QueueProgramsModel>> GetQueuePrograms(Guid? userId)
+        public async Task<IQueryable<QueueProgramsModel>> GetQueuePrograms()
         {
 
             string authorizationHeader = Request.Headers["Authorization"];
@@ -55,7 +69,22 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            return await _programsService.GetQueuePrograms(userId ?? AuthorizeuserId.ToGuid());
+            return await _programsService.GetQueuePrograms(AuthorizeuserId.ToGuid());
+        }
+
+        [HttpGet("queue/{userId}")]
+        [Authorize(Roles = "Manager, MainManager, Admin")]
+        public async Task<IQueryable<QueueProgramsModel>> GetQueuePrograms(Guid userId)
+        {
+
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+            // если userId введён, то проверка прав, что id в Authorize является просто Менеджером
+            // Если userId не введён, то userId = id из Authorize
+
+            var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
+
+            return await _programsService.GetQueuePrograms(userId);
         }
     }
 
