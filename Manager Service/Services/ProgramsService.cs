@@ -18,11 +18,13 @@ namespace Manager_Service.Services
     {
         private readonly ApplicationContext _context;
         private readonly Handbook_Service.Context.ApplicationContext _contextH;
+        private readonly User_Service.Context.ApplicationContext _contextU;
 
-        public ProgramsService(ApplicationContext context, Handbook_Service.Context.ApplicationContext contextH)
+        public ProgramsService(ApplicationContext context, Handbook_Service.Context.ApplicationContext contextH, User_Service.Context.ApplicationContext contextU)
         {
             _context = context;
             _contextH = contextH;
+            _contextU = contextU;
         }
 
         public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms(ProgramSearchModel programSearchModel)
@@ -85,7 +87,25 @@ namespace Manager_Service.Services
         public async Task CreateQueuePrograms(Guid userId, List<Guid> programs)
         {
             //Проверка существования пользователя с userId
+            var user = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId.ToString());
+            if (user == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "User not exists");
+                throw ex;
+            }
             //Проверка существования всех программ с List<Guid> programs
+            foreach (var programId in programs)
+            {
+                var existingProgramId = await _contextH.EducationPrograms.FirstOrDefaultAsync(u => u.Id == programId);
+                if (existingProgramId == null)
+                {
+                    var ex = new Exception();
+                    ex.Data.Add(StatusCodes.Status404NotFound.ToString(), $"Program with ID {programId} not found");
+                    throw ex;
+                }
+            }
+
 
             QueueProgramsModel queue = new QueueProgramsModel
             {
