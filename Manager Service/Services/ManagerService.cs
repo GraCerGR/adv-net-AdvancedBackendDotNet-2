@@ -1,4 +1,4 @@
-﻿using Manager_Service.Context;
+﻿/*using Manager_Service.Context;
 using Manager_Service.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -16,17 +16,19 @@ namespace Manager_Service.Services
     public class ManagerService : IManagerService
     {
         private readonly ApplicationContext _context;
+        private readonly User_Service.Context.ApplicationContext _contextU;
 
-        public ManagerService(ApplicationContext context)
+        public ManagerService(ApplicationContext context, User_Service.Context.ApplicationContext contextU)
         {
             _context = context;
+            _contextU = contextU;
         }
 
         public async Task<ManagerCreateModel[]> CreateManagers(ManagerCreateModel[] managerCreateModel)
         {
             foreach (var managerModel in managerCreateModel)
             {
-                var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Id == managerModel.Id);
+                var userEntity = await _contextU.Users.FirstOrDefaultAsync(x => x.Id == managerModel.Id);
                 if (userEntity == null)
                 {
                     var ex = new Exception();
@@ -34,7 +36,7 @@ namespace Manager_Service.Services
                     throw ex;
                 }
 
-                var managerEntity = await _context.Managers.FirstOrDefaultAsync(x => x.UserId == managerModel.Id);
+                var managerEntity = await _contextU.Managers.FirstOrDefaultAsync(x => x.UserId == managerModel.Id);
                 if (managerEntity != null)
                 {
                     var ex = new Exception();
@@ -51,7 +53,7 @@ namespace Manager_Service.Services
 
                 try
                 {
-                    await _context.Managers.AddAsync(manager);
+                    await _contextU.Managers.AddAsync(manager);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateException ex)
@@ -70,3 +72,4 @@ namespace Manager_Service.Services
         }
     }
 }
+*/

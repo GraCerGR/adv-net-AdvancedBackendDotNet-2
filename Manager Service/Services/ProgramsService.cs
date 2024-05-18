@@ -10,6 +10,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Manager_Service.Models.DTO;
 using Manager_Service.Models;
+using User_Service.Models;
 
 namespace Manager_Service.Services
 {
@@ -79,6 +80,34 @@ namespace Manager_Service.Services
             };
 
             return programPagedListModel;
+        }
+
+        public async Task CreateQueuePrograms(Guid userId, List<Guid> programs)
+        {
+            //Проверка существования пользователя с userId
+            //Проверка существования всех программ с List<Guid> programs
+
+            QueueProgramsModel queue = new QueueProgramsModel
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Queue = programs
+            };
+
+            try
+            {
+                await _context.QueuePrograms.AddAsync(queue);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var innerException = ex.InnerException;
+                while (innerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + innerException.Message);
+                    innerException = innerException.InnerException;
+                }
+            }
         }
     }
 }

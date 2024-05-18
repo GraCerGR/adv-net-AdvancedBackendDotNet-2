@@ -1,6 +1,5 @@
 ﻿using Manager_Service.Models;
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Models;
 
 namespace Manager_Service.Context
 {
@@ -11,15 +10,12 @@ namespace Manager_Service.Context
             Database.EnsureCreated();
         }
 
-        public DbSet<ManagerModel> Managers { get; set; }
-
-        public DbSet<UserModel> Users { get; set; }
+        public DbSet<QueueProgramsModel> QueuePrograms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ManagerModel>().HasKey(x => x.Id);
 
-            modelBuilder.Entity<UserModel>().HasKey(x => x.Id);
+            modelBuilder.Entity<QueueProgramsModel>().HasKey(x => x.Id);
         }
     }
 }

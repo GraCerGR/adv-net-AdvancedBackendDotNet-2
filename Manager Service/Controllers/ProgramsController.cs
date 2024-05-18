@@ -24,5 +24,15 @@ namespace Manager_Service.Controllers
         {
             return await _programsService.GetPrograms(programSearchModel);
         }
+
+        [HttpPost("queue")]
+        //[Authorize]
+        public async Task CreateQueuePrograms(Guid? userId, List<Guid> programs)
+        {
+            // Проверка прав, что id в Authorize является Менеджером userId
+            // Если userId не введён, то userId = id из Authorize
+
+            await _programsService.CreateQueuePrograms(userId ?? Guid.Empty, programs);
+        }
     }
 }
