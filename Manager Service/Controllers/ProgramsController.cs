@@ -35,14 +35,31 @@ namespace Manager_Service.Controllers
             
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
-            // Проверка прав, что id в Authorize является Менеджером userId
+            // если userId введён, то проверка прав, что id в Authorize является Менеджером пользователя userId
             // Если userId не введён, то userId = id из Authorize
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
             await _programsService.CreateQueuePrograms(userId ?? AuthorizeuserId.ToGuid(), programs);
         }
+
+        [HttpGet("queue")]
+        [Authorize]
+        public async Task<IQueryable<QueueProgramsModel>> GetQueuePrograms(Guid? userId)
+        {
+
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+            // если userId введён, то проверка прав, что id в Authorize является просто Менеджером
+            // Если userId не введён, то userId = id из Authorize
+
+            var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
+
+            return await _programsService.GetQueuePrograms(userId ?? AuthorizeuserId.ToGuid());
+        }
     }
+
+
     public static class GuidExtensions
     {
         public static Guid ToGuid(this object obj)

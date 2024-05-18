@@ -106,6 +106,8 @@ namespace Manager_Service.Services
                 }
             }
 
+            _context.QueuePrograms.RemoveRange(_context.QueuePrograms.Where(qp => qp.UserId == userId));
+            await _context.SaveChangesAsync();
 
             QueueProgramsModel queue = new QueueProgramsModel
             {
@@ -128,6 +130,22 @@ namespace Manager_Service.Services
                     innerException = innerException.InnerException;
                 }
             }
+        }
+
+        public async Task<IQueryable<QueueProgramsModel>> GetQueuePrograms(Guid userId)
+        {
+            //Проверка существования пользователя с userId
+            var user = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId.ToString());
+            if (user == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "User not exists");
+                throw ex;
+            }
+
+            IQueryable<QueueProgramsModel> query = _context.QueuePrograms;
+            return query.Where(p => p.UserId == userId);
+
         }
     }
 }
