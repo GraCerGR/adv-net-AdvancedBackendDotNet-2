@@ -44,7 +44,7 @@ namespace Handbook_Service.Controllers
         }
 
         [HttpGet("DocumentTypes")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ImportDocumentTypes()
         {
             var programs = await _handbookService.GetDocumentType();
