@@ -21,12 +21,12 @@ namespace Manager_Service.Controllers
         }
 
 
-        [HttpGet("program")]
+/*        [HttpGet("programs")] АААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА
         //[Authorize]
         public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms([FromQuery] ProgramSearchModel programSearchModel)
         {
             return await _programsService.GetPrograms(programSearchModel);
-        }
+        }*/
 
         [HttpPost("queue")]
         [Authorize]

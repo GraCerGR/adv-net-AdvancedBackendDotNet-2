@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Manager_Service.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240519114949_Applications")]
-    partial class Applications
+    [Migration("20240519155826_ApplicationsStatus")]
+    partial class ApplicationsStatus
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,24 +32,22 @@ namespace Manager_Service.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ApplicantId")
+                    b.Property<Guid>("Applicant")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ManagerId")
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("Manager")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("QueueProgramId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicantId");
-
-                    b.HasIndex("ManagerId");
 
                     b.HasIndex("QueueProgramId");
 
@@ -74,58 +72,13 @@ namespace Manager_Service.Migrations
                     b.ToTable("QueuePrograms");
                 });
 
-            modelBuilder.Entity("User_Service.Models.DTO.UserDto", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("Birthdate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Citizenship")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserDto");
-                });
-
             modelBuilder.Entity("Manager_Service.Models.ApplicationModel", b =>
                 {
-                    b.HasOne("User_Service.Models.DTO.UserDto", "Applicant")
-                        .WithMany()
-                        .HasForeignKey("ApplicantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("User_Service.Models.DTO.UserDto", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId");
-
                     b.HasOne("Manager_Service.Models.QueueProgramsModel", "QueueProgram")
                         .WithMany()
                         .HasForeignKey("QueueProgramId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Applicant");
-
-                    b.Navigation("Manager");
 
                     b.Navigation("QueueProgram");
                 });

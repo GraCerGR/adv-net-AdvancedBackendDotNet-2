@@ -9,13 +9,15 @@ namespace Manager_Service.Models
         [Key]
         public Guid Id { get; set; }
 
-        public UserDto Applicant { get; set; }
+        public Guid Applicant { get; set; }
 
         public QueueProgramsModel QueueProgram { get; set; }
 
-        public UserDto? Manager { get; set; }
+        public Guid? Manager { get; set; }
 
-        public string Status { get; set; }
+        public Status Status { get; set; }
+
+        public DateTime LastModification { get; set; }
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

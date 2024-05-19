@@ -17,9 +17,6 @@ builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(b
 builder.Services.AddDbContext<Handbook_Service.Context.ApplicationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<User_Service.Context.ApplicationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IProgramsService, ProgramsService>();
-builder.Services.AddScoped<IApplicationsService, ApplicationsService>();
-
 builder.Configuration.AddJsonFile("appsettings.json");
 string jwtSecret = builder.Configuration["TokenSettings:JwtSecret"];
 string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];
@@ -28,6 +25,9 @@ string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];
 builder.Services.AddSingleton(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IProgramsService, ProgramsService>();
+builder.Services.AddScoped<IApplicationsService, ApplicationsService>();
 // Add services to the container.
 /*builder.Services.AddScoped<IManagerService, Manager_Service.Services.ManagerService>();*/
 

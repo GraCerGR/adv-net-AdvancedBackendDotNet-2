@@ -3,6 +3,7 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Manager_Service.Services.Interfaces;
 using Manager_Service.Models;
+using Manager_Service.Models.DTO;
 using User_Service.Services.Interfaces;
 
 namespace Manager_Service.Controllers
@@ -20,6 +21,17 @@ namespace Manager_Service.Controllers
             _userService = userService;
         }
 
+        [HttpGet("applications")]
+        //[Authorize(Roles = "Manager, MainManager, Admin")]
+        public async Task<ApplicationPagedListModel> GetApplications([FromQuery] ApplicationSearchModel applicationSearchModel)
+        {
+            /*            string authorizationHeader = Request.Headers["Authorization"];
+                        string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+
+                        var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);*/
+
+            return await _applicationsService.GetApplication(applicationSearchModel, /*AuthorizeuserId.ToGuid()*/ Guid.NewGuid());
+        }
 
         [HttpPost]
         [Authorize]
@@ -33,16 +45,16 @@ namespace Manager_Service.Controllers
             return await _applicationsService.CreateApplication(AuthorizeuserId.ToGuid());
         }
 
-/*        [HttpDelete]
+        [HttpDelete]
         [Authorize]
-        public async Task<ApplicationModel> DeleteApplication()
+        public async Task DeleteApplication()
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            return await _applicationsService.DeleteApplication(AuthorizeuserId.ToGuid());
-        }*/
+            await _applicationsService.DeleteApplication(AuthorizeuserId.ToGuid());
+        }
     }
 }
