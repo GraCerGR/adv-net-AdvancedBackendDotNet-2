@@ -18,6 +18,7 @@ builder.Services.AddDbContext<Handbook_Service.Context.ApplicationContext>(optio
 builder.Services.AddDbContext<User_Service.Context.ApplicationContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IProgramsService, ProgramsService>();
+builder.Services.AddScoped<IApplicationsService, ApplicationsService>();
 
 builder.Configuration.AddJsonFile("appsettings.json");
 string jwtSecret = builder.Configuration["TokenSettings:JwtSecret"];

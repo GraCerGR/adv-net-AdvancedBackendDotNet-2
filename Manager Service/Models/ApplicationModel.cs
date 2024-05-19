@@ -13,7 +13,7 @@ namespace Manager_Service.Models
 
         public QueueProgramsModel QueueProgram { get; set; }
 
-        public UserDto Manager { get; set; }
+        public UserDto? Manager { get; set; }
 
         public string Status { get; set; }
     }

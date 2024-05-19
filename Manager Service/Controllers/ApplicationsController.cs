@@ -32,5 +32,17 @@ namespace Manager_Service.Controllers
 
             return await _applicationsService.CreateApplication(AuthorizeuserId.ToGuid());
         }
+
+/*        [HttpDelete]
+        [Authorize]
+        public async Task<ApplicationModel> DeleteApplication()
+        {
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+
+            var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
+
+            return await _applicationsService.DeleteApplication(AuthorizeuserId.ToGuid());
+        }*/
     }
 }
