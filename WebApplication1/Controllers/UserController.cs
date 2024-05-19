@@ -66,7 +66,7 @@ namespace WebApplication1.Controllers
 
                 var userProfile = await _userService.GetProfile(userId); // - Существует такой пользователь или нет
 
-                //Проверка: UserId менеджер абитуриента userApplicantId
+                //Проверка: UserId менеджер 
 
 
 
