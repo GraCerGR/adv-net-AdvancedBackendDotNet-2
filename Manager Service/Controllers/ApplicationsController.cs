@@ -23,6 +23,7 @@ namespace Manager_Service.Controllers
             _userService = userService;
         }
 
+        //Получить все заявки
         [HttpGet("applications")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<ApplicationPagedListModel> GetApplications([FromQuery] ApplicationSearchModel applicationSearchModel)
@@ -35,6 +36,7 @@ namespace Manager_Service.Controllers
             return await _applicationsService.GetApplication(applicationSearchModel, AuthorizeuserId.ToGuid());
         }
 
+        //Создать заявку
         [HttpPost]
         [Authorize]
         public async Task<ApplicationModel> CreateApplication()
@@ -47,6 +49,7 @@ namespace Manager_Service.Controllers
             return await _applicationsService.CreateApplication(AuthorizeuserId.ToGuid());
         }
 
+        //Удалить заявку
         [HttpDelete]
         [Authorize]
         public async Task DeleteApplication()
@@ -59,7 +62,8 @@ namespace Manager_Service.Controllers
             await _applicationsService.DeleteApplication(AuthorizeuserId.ToGuid(), null);
         }
 
-        [HttpDelete("{UserId}")]
+        //Удалить заявку пользователя с id UserId
+        [HttpDelete("{userId}")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task DeleteApplicationBy([FromBody] Guid userId)
         {
@@ -71,6 +75,7 @@ namespace Manager_Service.Controllers
             await _applicationsService.DeleteApplication(userId, AuthorizeuserId.ToGuid());
         }
 
+        //Назначить менеджера (себя) на заявление
         [HttpPost("{applicationId}/assign-manager")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<IActionResult> AssignManagerToApplication([FromBody] Guid applicationId)
@@ -85,6 +90,7 @@ namespace Manager_Service.Controllers
             return Ok("Manager assigned successfully");
         }
 
+        //Назначить менеджера (другого) на заявление
         [HttpPost("{applicationId}/assign-manager-by")]
         [Authorize(Roles = "MainManager, Admin")]
         public async Task<IActionResult> AssignManagerToApplicationBy([FromBody] Guid applicationId, [Required] Guid managerId)
@@ -99,6 +105,7 @@ namespace Manager_Service.Controllers
             return Ok("Manager assigned successfully");
         }
 
+        //Удалить менеджера (себя) с заявления
         [HttpDelete("{applicationId}/assign-manager")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<IActionResult> DeleteManagerToApplication([FromBody] Guid applicationId)
@@ -113,7 +120,7 @@ namespace Manager_Service.Controllers
             return Ok("You refused admission");
         }
 
-
+        //Установить статус заявления
         [HttpPost("{applicationId}/status")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<IActionResult> SetStatus([FromBody] Guid applicationId, Status status)

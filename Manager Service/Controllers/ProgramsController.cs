@@ -22,7 +22,7 @@ namespace Manager_Service.Controllers
             _applicationsService = applicationsService;
         }
 
-
+        //Создать приоритет программ (свой)
         [HttpPost("queue")]
         [Authorize]
         public async Task CreateQueuePrograms(List<Guid> programs)
@@ -38,6 +38,7 @@ namespace Manager_Service.Controllers
             await _programsService.CreateQueuePrograms(AuthorizeuserId.ToGuid(), programs);
         }
 
+        //Создать чужой приоритет программ (пользователю с id userId)
         [HttpPost("queue/{userId}")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task CreateQueuePrograms(Guid userId, List<Guid> programs)
@@ -52,6 +53,7 @@ namespace Manager_Service.Controllers
             await _programsService.CreateQueuePrograms(userId, programs);
         }
 
+        //Получить свой приоритет программ
         [HttpGet("queue")]
         [Authorize]
         public async Task<IQueryable<QueueProgramsModel>> GetQueuePrograms()
@@ -67,6 +69,7 @@ namespace Manager_Service.Controllers
             return await _programsService.GetQueuePrograms(AuthorizeuserId.ToGuid());
         }
 
+        //Получить чужой приоритет программ (пользователя с id userId)
         [HttpGet("queue/{userId}")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<IQueryable<QueueProgramsModel>> GetQueuePrograms(Guid userId)
@@ -82,6 +85,7 @@ namespace Manager_Service.Controllers
             return await _programsService.GetQueuePrograms(userId);
         }
 
+        //Получить все программы (конфликт с Get в Application)
 /*        [HttpGet("programs")]
         //[Authorize]
         public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms([FromQuery] ProgramSearchModel programSearchModel)
