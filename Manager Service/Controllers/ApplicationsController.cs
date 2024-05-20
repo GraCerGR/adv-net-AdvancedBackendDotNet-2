@@ -5,6 +5,7 @@ using Manager_Service.Services.Interfaces;
 using Manager_Service.Models;
 using Manager_Service.Models.DTO;
 using User_Service.Services.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace Manager_Service.Controllers
 {
@@ -71,19 +72,19 @@ namespace Manager_Service.Controllers
             return Ok("Manager assigned successfully");
         }
 
-        /*        [HttpPost("{applicationId}/assign-manager-by")]
-                [Authorize(Roles = "MainManager, Admin")]
-                public async Task<IActionResult> AssignManagerToApplicationBy([FromBody] Guid applicationId, [FromBody] Guid managerId)
-                {
-                    string authorizationHeader = Request.Headers["Authorization"];
-                    string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+        [HttpPost("{applicationId}/assign-manager-by")]
+        [Authorize(Roles = "MainManager, Admin")]
+        public async Task<IActionResult> AssignManagerToApplicationBy([FromBody] Guid applicationId, [Required] Guid managerId)
+        {
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
 
-                    var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
+            var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-                    await _applicationsService.ManagerApplication(applicationId, managerId);
+            await _applicationsService.ManagerApplication(applicationId, managerId);
 
-                    return Ok("Manager assigned successfully");
-                }*/
+            return Ok("Manager assigned successfully");
+        }
 
         [HttpDelete("{applicationId}/assign-manager")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
@@ -97,6 +98,20 @@ namespace Manager_Service.Controllers
             await _applicationsService.DeleteManagerApplication(applicationId, Guid.Parse(AuthorizeuserId));
 
             return Ok("You refused admission");
+        }
+
+        [HttpPost("{applicationId}/status")]
+        [Authorize(Roles = "Manager, MainManager, Admin")]
+        public async Task<IActionResult> SetStatus([FromBody] Guid applicationId, Status status)
+        {
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+
+            var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
+
+            await _applicationsService.SetStatus(applicationId, Guid.Parse(AuthorizeuserId), status);
+
+            return Ok("Status assigned successfully");
         }
     }
 }

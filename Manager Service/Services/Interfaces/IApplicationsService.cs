@@ -15,5 +15,7 @@ namespace Manager_Service.Services.Interfaces
         Task ManagerApplication(Guid applicationId, Guid managerId);
 
         Task DeleteManagerApplication(Guid applicationId, Guid managerId);
+
+        Task SetStatus(Guid appplicationId, Guid managerId, Status status);
     }
 }

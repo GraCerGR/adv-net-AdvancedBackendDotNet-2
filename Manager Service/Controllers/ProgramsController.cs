@@ -21,13 +21,6 @@ namespace Manager_Service.Controllers
         }
 
 
-/*        [HttpGet("programs")] АААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА
-        //[Authorize]
-        public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms([FromQuery] ProgramSearchModel programSearchModel)
-        {
-            return await _programsService.GetPrograms(programSearchModel);
-        }*/
-
         [HttpPost("queue")]
         [Authorize]
         public async Task CreateQueuePrograms(List<Guid> programs)
@@ -86,6 +79,13 @@ namespace Manager_Service.Controllers
 
             return await _programsService.GetQueuePrograms(userId);
         }
+
+/*        [HttpGet("programs")]
+        //[Authorize]
+        public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms([FromQuery] ProgramSearchModel programSearchModel)
+        {
+            return await _programsService.GetPrograms(programSearchModel);
+        }*/
     }
 
 

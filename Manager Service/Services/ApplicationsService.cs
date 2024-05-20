@@ -296,6 +296,57 @@ namespace Manager_Service.Services
             return;
         }
 
+        public async Task SetStatus(Guid appplicationId, Guid managerId, Status status)
+        {
+            var application = await _context.Applications.FirstOrDefaultAsync(q => q.Id.ToString() == appplicationId.ToString());
+            if (application == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status404NotFound.ToString(), $"The appplication was not found");
+                throw ex;
+            }
+
+            var manager = await _contextU.Managers.FirstOrDefaultAsync(u => u.UserId.ToString() == managerId.ToString());
+            if (manager == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status404NotFound.ToString(), "Manager not exists");
+                throw ex;
+            }
+
+            if (application.Manager != managerId)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "You are not the manager of this application");
+                throw ex;
+            }
+
+            if (application.Status == status)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "The application has already been assigned this status");
+                throw ex;
+            }
+
+            application.Status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var innerException = ex.InnerException;
+                while (innerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + innerException.Message);
+                    innerException = innerException.InnerException;
+                }
+            }
+
+            return;
+        }
+
         private UserDto UserModelToDto(UserModel userModel)
         {
             if (userModel == null)
