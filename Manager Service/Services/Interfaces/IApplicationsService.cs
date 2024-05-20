@@ -13,5 +13,7 @@ namespace Manager_Service.Services.Interfaces
         Task<ApplicationPagedListModel> GetApplication(ApplicationSearchModel applicationSearchModel, Guid userId);
 
         Task ManagerApplication(Guid applicationId, Guid managerId);
+
+        Task DeleteManagerApplication(Guid applicationId, Guid managerId);
     }
 }

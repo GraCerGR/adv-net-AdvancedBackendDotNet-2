@@ -228,34 +228,59 @@ namespace Manager_Service.Services
                 throw ex;
             }
 
-            var managerDto = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == managerId.ToString());
-
-            /*            UserDto userDto = new UserDto
-                                    {
-                                        Id = managerDto.Id,
-                                        Name = managerDto.Name,
-                                        Email = managerDto.Email,
-                                        Birthdate = managerDto.Birthdate,
-                                        Gender = managerDto.Gender,
-                                        Citizenship = managerDto.Citizenship,
-                                        PhoneNumber = managerDto.PhoneNumber,
-                                    };*/
-
-            /*            ApplicationModel applicationNew = new ApplicationModel
-                        {
-                            Id = application.Id,
-                            Applicant = application.Applicant,
-                            QueueProgram = application.QueueProgram,
-                            Manager = manager.Id,
-                            Status = application.Status,
-                            LastModification = DateTime.UtcNow,
-                        };*/
-
             application.Manager = managerId;
             try
             {
-/*                _context.Applications.RemoveRange(_context.Applications.Where(ap => ap.Id == application.Id));
-                await _context.AddAsync(applicationNew);*/
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var innerException = ex.InnerException;
+                while (innerException != null)
+                {
+                    Console.WriteLine("Inner Exception: " + innerException.Message);
+                    innerException = innerException.InnerException;
+                }
+            }
+
+            return;
+        }
+
+        public async Task DeleteManagerApplication(Guid appplicationId, Guid managerId)
+        {
+            var application = await _context.Applications.FirstOrDefaultAsync(q => q.Id.ToString() == appplicationId.ToString());
+            if (application == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status404NotFound.ToString(), $"The appplication was not found");
+                throw ex;
+            }
+
+            var manager = await _contextU.Managers.FirstOrDefaultAsync(u => u.UserId.ToString() == managerId.ToString());
+            if (manager == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status404NotFound.ToString(), "Manager not exists");
+                throw ex;
+            }
+
+            if (application.Manager == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "The application does not have a manager");
+                throw ex;
+            }
+
+            if (application.Manager != managerId)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "You are not the manager of this application");
+                throw ex;
+            }
+
+            application.Manager = null;
+            try
+            {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException ex)

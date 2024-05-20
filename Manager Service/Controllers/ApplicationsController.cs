@@ -22,7 +22,7 @@ namespace Manager_Service.Controllers
         }
 
         [HttpGet("applications")]
-        //[Authorize(Roles = "Manager, MainManager, Admin")]
+        [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<ApplicationPagedListModel> GetApplications([FromQuery] ApplicationSearchModel applicationSearchModel)
         {
                         string authorizationHeader = Request.Headers["Authorization"];
@@ -71,18 +71,32 @@ namespace Manager_Service.Controllers
             return Ok("Manager assigned successfully");
         }
 
-/*        [HttpPost("{applicationId}/assign-manager-by")]
-        [Authorize(Roles = "MainManager, Admin")]
-        public async Task<IActionResult> AssignManagerToApplicationBy([FromBody] Guid applicationId, [FromBody] Guid managerId)
+        /*        [HttpPost("{applicationId}/assign-manager-by")]
+                [Authorize(Roles = "MainManager, Admin")]
+                public async Task<IActionResult> AssignManagerToApplicationBy([FromBody] Guid applicationId, [FromBody] Guid managerId)
+                {
+                    string authorizationHeader = Request.Headers["Authorization"];
+                    string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+
+                    var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
+
+                    await _applicationsService.ManagerApplication(applicationId, managerId);
+
+                    return Ok("Manager assigned successfully");
+                }*/
+
+        [HttpDelete("{applicationId}/assign-manager")]
+        [Authorize(Roles = "Manager, MainManager, Admin")]
+        public async Task<IActionResult> DeleteManagerToApplication([FromBody] Guid applicationId)
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _applicationsService.ManagerApplication(applicationId, managerId);
+            await _applicationsService.DeleteManagerApplication(applicationId, Guid.Parse(AuthorizeuserId));
 
-            return Ok("Manager assigned successfully");
-        }*/
+            return Ok("You refused admission");
+        }
     }
 }
