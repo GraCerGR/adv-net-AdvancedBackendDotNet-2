@@ -8,7 +8,7 @@ namespace Manager_Service.Services.Interfaces
     {
         Task<ApplicationModel> CreateApplication(Guid userId);
 
-        Task DeleteApplication(Guid userId);
+        Task DeleteApplication(Guid userId, Guid? managerId);
 
         Task<ApplicationPagedListModel> GetApplication(ApplicationSearchModel applicationSearchModel, Guid userId);
 

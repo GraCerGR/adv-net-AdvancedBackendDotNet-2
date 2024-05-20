@@ -13,11 +13,13 @@ namespace Manager_Service.Controllers
     {
         private readonly IProgramsService _programsService;
         private readonly IUserService _userService;
+        private readonly IApplicationsService _applicationsService;
 
-        public ProgramsController(IProgramsService programsService, IUserService userService)
+        public ProgramsController(IProgramsService programsService, IUserService userService, IApplicationsService applicationsService)
         {
             _programsService = programsService;
             _userService = userService;
+            _applicationsService = applicationsService;
         }
 
 

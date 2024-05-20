@@ -106,6 +106,15 @@ namespace Manager_Service.Services
                 }
             }
 
+            var ExistingApplication = await _context.Applications.FirstOrDefaultAsync(u => u.Applicant.ToString() == userId.ToString());
+
+            if (ExistingApplication != null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "The application has already been created. Delete the previous application to change the program queue");
+                throw ex;
+            }
+
             _context.QueuePrograms.RemoveRange(_context.QueuePrograms.Where(qp => qp.UserId == userId));
             await _context.SaveChangesAsync();
 

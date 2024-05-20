@@ -90,7 +90,7 @@ namespace Manager_Service.Services
             return application;
         }
 
-        public async Task DeleteApplication(Guid userId)
+        public async Task DeleteApplication(Guid userId, Guid? managerId)
         {
             var user = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId.ToString());
             if (user == null)
@@ -106,6 +106,16 @@ namespace Manager_Service.Services
                 var ex = new Exception();
                 ex.Data.Add(StatusCodes.Status404NotFound.ToString(), "The application was not found");
                 throw ex;
+            }
+
+            if (managerId != null)
+            {
+                if (ExistingApplicant.Manager != managerId)
+                {
+                    var ex = new Exception();
+                    ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "You are not the manager of this application");
+                    throw ex;
+                }
             }
 
             _context.Applications.RemoveRange(_context.Applications.Where(ap => ap.Applicant == userId));

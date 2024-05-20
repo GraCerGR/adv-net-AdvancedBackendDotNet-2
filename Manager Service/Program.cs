@@ -26,8 +26,8 @@ builder.Services.AddSingleton(provider => new TokenService(jwtSecret, refreshSec
 builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddScoped<IApplicationsService, ApplicationsService>();
 builder.Services.AddScoped<IProgramsService, ProgramsService>();
+builder.Services.AddScoped<IApplicationsService, ApplicationsService>();
 // Add services to the container.
 /*builder.Services.AddScoped<IManagerService, Manager_Service.Services.ManagerService>();*/
 

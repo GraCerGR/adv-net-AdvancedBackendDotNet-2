@@ -6,6 +6,7 @@ using Manager_Service.Models;
 using Manager_Service.Models.DTO;
 using User_Service.Services.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace Manager_Service.Controllers
 {
@@ -55,7 +56,19 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _applicationsService.DeleteApplication(AuthorizeuserId.ToGuid());
+            await _applicationsService.DeleteApplication(AuthorizeuserId.ToGuid(), null);
+        }
+
+        [HttpDelete("{UserId}")]
+        [Authorize(Roles = "Manager, MainManager, Admin")]
+        public async Task DeleteApplicationBy([FromBody] Guid userId)
+        {
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+
+            var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
+
+            await _applicationsService.DeleteApplication(userId, AuthorizeuserId.ToGuid());
         }
 
         [HttpPost("{applicationId}/assign-manager")]
@@ -99,6 +112,7 @@ namespace Manager_Service.Controllers
 
             return Ok("You refused admission");
         }
+
 
         [HttpPost("{applicationId}/status")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
