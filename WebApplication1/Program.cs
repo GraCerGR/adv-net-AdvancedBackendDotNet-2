@@ -23,7 +23,7 @@ builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(b
 builder.Services.AddSingleton(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<IUserService, UserService>();
-//builder.Services.AddScoped<IManagerService, ManagerService>();
+builder.Services.AddScoped<IManagerService, ManagerService>();
 
 //builder.Services.AddScoped<INotificationService, NotificationService>();
 //builder.Services.AddScoped<ITokenService, TokenService>();
