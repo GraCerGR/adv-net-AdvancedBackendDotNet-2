@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿/*using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Manager_Service.Services.Interfaces;
@@ -25,4 +25,4 @@ namespace Manager_Service.Controllers
             return await _managerService.CreateManagers(managerCreateModel);
         }
     }
-}
+}*/
