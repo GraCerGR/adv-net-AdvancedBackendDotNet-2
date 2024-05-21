@@ -7,6 +7,7 @@ using Manager_Service.Models.DTO;
 using User_Service.Services.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using User_Service.Models.DTO;
 
 namespace Manager_Service.Controllers
 {
@@ -130,7 +131,9 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _applicationsService.SetStatus(applicationId, Guid.Parse(AuthorizeuserId), status);
+            MessageDto messageData =  await _applicationsService.SetStatus(applicationId, Guid.Parse(AuthorizeuserId), status);
+
+            await _userService.SendNotificationRabbitMQ(messageData);
 
             return Ok("Status assigned successfully");
         }

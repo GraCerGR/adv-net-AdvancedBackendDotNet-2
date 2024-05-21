@@ -1,6 +1,7 @@
 ﻿using Manager_Service.Models;
 using Manager_Service.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
+using User_Service.Models.DTO;
 
 namespace Manager_Service.Services.Interfaces
 {
@@ -16,6 +17,6 @@ namespace Manager_Service.Services.Interfaces
 
         Task DeleteManagerApplication(Guid applicationId, Guid managerId);
 
-        Task SetStatus(Guid appplicationId, Guid managerId, Status status);
+        Task<MessageDto> SetStatus(Guid appplicationId, Guid managerId, Status status);
     }
 }

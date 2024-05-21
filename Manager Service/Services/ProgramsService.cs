@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Manager_Service.Models.DTO;
 using Manager_Service.Models;
 using User_Service.Models;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using Microsoft.Extensions.Configuration;
 
 namespace Manager_Service.Services
 {
@@ -20,11 +22,14 @@ namespace Manager_Service.Services
         private readonly Handbook_Service.Context.ApplicationContext _contextH;
         private readonly User_Service.Context.ApplicationContext _contextU;
 
-        public ProgramsService(ApplicationContext context, Handbook_Service.Context.ApplicationContext contextH, User_Service.Context.ApplicationContext contextU)
+        private readonly IConfiguration _config;
+
+        public ProgramsService(ApplicationContext context, Handbook_Service.Context.ApplicationContext contextH, User_Service.Context.ApplicationContext contextU, IConfiguration config)
         {
             _context = context;
             _contextH = contextH;
             _contextU = contextU;
+            _config = config;
         }
 
         public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms(ProgramSearchModel programSearchModel)
@@ -86,6 +91,15 @@ namespace Manager_Service.Services
 
         public async Task CreateQueuePrograms(Guid userId, List<Guid> programs)
         {
+            int queueProgramsLimit = _config.GetValue<int>("QueueProgramsLimit");
+
+            if (programs.Count > queueProgramsLimit)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status400BadRequest.ToString(), $"Number of programs exceeds the limit of {queueProgramsLimit}");
+                throw ex;
+            }
+
             //Проверка существования пользователя с userId
             var user = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId.ToString());
             if (user == null)

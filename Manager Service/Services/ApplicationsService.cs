@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using User_Service.Models.DTO;
 using Manager_Service.Models.DTO;
 using User_Service.Models;
+using User_Service.Services;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
 
@@ -306,7 +307,7 @@ namespace Manager_Service.Services
             return;
         }
 
-        public async Task SetStatus(Guid appplicationId, Guid managerId, Status status)
+        public async Task<MessageDto> SetStatus(Guid appplicationId, Guid managerId, Status status)
         {
             var application = await _context.Applications.FirstOrDefaultAsync(q => q.Id.ToString() == appplicationId.ToString());
             if (application == null)
@@ -354,7 +355,16 @@ namespace Manager_Service.Services
                 }
             }
 
-            return;
+            var user = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == application.Applicant.ToString());
+
+            var messageData = new MessageDto
+            {
+                Id = Guid.NewGuid(),
+                Email = user.Email,
+                Message = $"The status of your application has changed to: {application.Status}"
+            };
+
+            return messageData;
         }
 
         private UserDto UserModelToDto(UserModel userModel)

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Manager_Service.Services;
 using Manager_Service.Context;
 using User_Service.Services;
+using User_Service;
 using User_Service.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -20,10 +21,12 @@ builder.Services.AddDbContext<User_Service.Context.ApplicationContext>(options =
 builder.Configuration.AddJsonFile("appsettings.json");
 string jwtSecret = builder.Configuration["TokenSettings:JwtSecret"];
 string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];
+
 // Add services to the container.
 //builder.Services.AddScoped<IManageFileService, ManageFileService>();
+//builder.Services.AddSingleton(provider => new TokenService(jwtSecret, refreshSecret));
+//builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddSingleton(provider => new TokenService(jwtSecret, refreshSecret));
-builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IProgramsService, ProgramsService>();
