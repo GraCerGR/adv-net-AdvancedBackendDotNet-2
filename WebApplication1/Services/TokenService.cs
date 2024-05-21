@@ -6,6 +6,7 @@ using System.Text;
 using User_Service.Context;
 using User_Service.Models;
 using User_Service.Services.Interfaces;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace User_Service.Services
 {
@@ -14,14 +15,19 @@ namespace User_Service.Services
         private readonly string _jwtSecret;
         private readonly string _refreshSecret;
 
-        public TokenService(string jwtSecret, string refreshSecret)
+/*        private readonly IConfiguration _config;*/
+
+        public TokenService(string jwtSecret, string refreshSecret/*, IConfiguration config*/)
         {
             _jwtSecret = jwtSecret;
             _refreshSecret = refreshSecret;
+/*            _config = config;*/
         }
 
         public async Task<TokenModel> GenerateAccessToken(Guid userId, string role)
         {
+/*            string jwtSecret = _config.GetValue<string>("TokenSettings:JwtSecret");
+            string refreshSecret = _config.GetValue<string>("TokenSettings:RefreshSecret");*/
             var accessExpires = DateTime.UtcNow.AddMinutes(5);
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtKey = Encoding.UTF8.GetBytes(_jwtSecret);

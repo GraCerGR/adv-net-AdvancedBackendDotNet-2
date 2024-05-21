@@ -20,5 +20,7 @@ namespace User_Service.Services.Interfaces
         Task<string> ChangePassword(string guid, EditPasswordModel editPasswordModel);
 
         Task SendCode(string code, string userId);
+
+        Task SendNotificationRabbitMQ(MessageDto messageData);
     }
 }
