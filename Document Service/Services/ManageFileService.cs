@@ -15,23 +15,26 @@ namespace Document_Service.Services
     {
 
         private readonly ApplicationContext _context;
+        private readonly User_Service.Context.ApplicationContext _contextU;
 
-        public ManageFileService(Document_Service.Context.ApplicationContext context)
+        public ManageFileService(Document_Service.Context.ApplicationContext context, User_Service.Context.ApplicationContext contextU)
         {
             _context = context;
+            _contextU = contextU;
         }
         public async Task<string> UploadFile(IFormFile _IFormFile, FileTypes fileType, Guid UserId, PassportDto passport, string educationType)
         {
 
-/*            var userEntity = await _context.Users.FirstOrDefaultAsync(x => x.Email == credentials.Email);
+            var user = await _contextU.Users.FirstOrDefaultAsync(x => x.Id == UserId);
 
-            if (userEntity == null)
+            //Если заявка закрыта
+            if (user.ApplicationStatus == true)
             {
                 var ex = new Exception();
-                ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "User not exists");
+                ex.Data.Add(StatusCodes.Status403Forbidden.ToString(), "The application is closed. The change is not possible");
                 throw ex;
-            }*/
-            
+            }
+
             //-------------------------Загрузка файла----------------------
             string FileName = "";
             try
@@ -105,6 +108,16 @@ namespace Document_Service.Services
 
         public async Task<string> DeleteFile(string FileName, Guid UserId, string educationType)
         {
+            var user = await _contextU.Users.FirstOrDefaultAsync(x => x.Id == UserId);
+
+            //Если заявка закрыта
+            if (user.ApplicationStatus == true)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status403Forbidden.ToString(), "The application is closed. The change is not possible");
+                throw ex;
+            }
+
             try
             {
                 var prevEducation = await _context.EducationFiles.FirstOrDefaultAsync(x => x.UserId == UserId && x.DocumentTypes == educationType && x.PathToFile.Contains(FileName));
