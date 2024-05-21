@@ -78,7 +78,9 @@ namespace Document_Service.Services
 
                 if (fileType == FileTypes.EducationFile)
                 {
-/*                    var prevEducation = await _context.EducationFiles.FirstOrDefaultAsync(x => x.UserId == UserId*//* && x.DocumentTypes == educationType*//*);
+                    //Удаление прошлого файла образования, если такой имеется.
+                    //Заккоментировал, потому что у пользователя може быть не один документ об одном виде образования
+/*                    var prevEducation = await _context.EducationFiles.FirstOrDefaultAsync(x => x.UserId == UserId && x.DocumentTypes == educationType);
                     if (prevEducation != null)
                     {
                         File.Delete(prevEducation.PathToFile);
