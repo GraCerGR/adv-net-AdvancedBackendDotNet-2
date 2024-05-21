@@ -100,6 +100,13 @@ namespace Manager_Service.Services
                 ex.Data.Add(StatusCodes.Status404NotFound.ToString(), "User not exists");
                 throw ex;
             }
+            //Если заявка закрыта
+            if (user.ApplicationStatus == true)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status403Forbidden.ToString(), "The application is closed. The change is not possible");
+                throw ex;
+            }
 
             var ExistingApplicant = await _context.Applications.FirstOrDefaultAsync(a => a.Applicant == userId);
             if (ExistingApplicant == null)
@@ -341,6 +348,17 @@ namespace Manager_Service.Services
 
             application.Status = status;
 
+            var user = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == application.Applicant.ToString());
+
+            if (status == Status.closed)
+            {
+                user.ApplicationStatus = true;
+            }
+            else
+            {
+                user.ApplicationStatus = false;
+            }
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -354,8 +372,6 @@ namespace Manager_Service.Services
                     innerException = innerException.InnerException;
                 }
             }
-
-            var user = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == application.Applicant.ToString());
 
             var messageData = new MessageDto
             {
