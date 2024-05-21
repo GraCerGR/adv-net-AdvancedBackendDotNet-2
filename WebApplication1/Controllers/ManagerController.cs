@@ -19,7 +19,7 @@ namespace Manager_Service.Controllers
 
 
         [HttpPost("manager")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ManagerCreateModel[]> CreateManagers(ManagerCreateModel[] managerCreateModel)
         {
             return await _managerService.CreateManagers(managerCreateModel);

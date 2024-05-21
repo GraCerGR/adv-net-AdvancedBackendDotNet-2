@@ -29,5 +29,7 @@ namespace User_Service.Models
         [Phone]
         public string? PhoneNumber { get; set; }
 
+        public bool ApplicationStatus { get; set; } = false;
+
     }
 }

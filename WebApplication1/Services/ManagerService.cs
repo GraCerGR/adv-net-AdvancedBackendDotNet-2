@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using User_Service.Models.DTO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace User_Service.Services
 {
@@ -47,6 +48,13 @@ namespace User_Service.Services
                     Id = Guid.NewGuid(),
                     UserId = managerModel.Id,
                     MainManager = managerModel.MainManager,
+                };
+
+                var messageData = new MessageDto
+                {
+                    Id = Guid.NewGuid(),
+                    Email = userEntity.Email,
+                    Message = $"You have been appointed as a manager"
                 };
 
                 try

@@ -214,6 +214,14 @@ namespace User_Service.Services
                 throw ex;
             }*/
 
+            //Если заявка закрыта
+            if (user.ApplicationStatus == true)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status403Forbidden.ToString(), "The application is closed. The change is not possible");
+                throw ex;
+            }
+
             CheckGender(editUserModel.Gender);
             CheckBirthdate(editUserModel.Birthdate);
 
