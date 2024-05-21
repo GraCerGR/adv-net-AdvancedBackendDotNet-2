@@ -108,7 +108,7 @@ namespace User_Service.Services
             string role = "Applicant";
 
             var manager = await _context.Managers.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
-            //var admin = await _context.Admins.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
+            var admin = await _context.Admins.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
 
             if (manager != null)
             {
@@ -122,10 +122,10 @@ namespace User_Service.Services
                 }
             }
 
-/*            if (admin != null)
+            if (admin != null)
             {
                 role = "Admin";
-            }*/
+            }
 
             //---------------------------------- Токены ---------------------------------------
 

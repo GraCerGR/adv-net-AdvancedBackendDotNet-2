@@ -13,6 +13,8 @@ namespace User_Service.Context
 
         public DbSet<ManagerModel> Managers { get; set; }
 
+        public DbSet<AdminModel> Admins { get; set; }
+
         public DbSet<EditPasswordCode> Codes { get; set; }
 
         public DbSet<RefreshTokenModel> RefreshTokens { get; set; }
@@ -23,6 +25,9 @@ namespace User_Service.Context
 
             modelBuilder.Entity<ManagerModel>().HasKey(x => x.Id);
             //modelBuilder.Entity<ManagerModel>().HasIndex(x => new { x.UserId}).IsUnique();
+
+            modelBuilder.Entity<AdminModel>().HasKey(x => x.Id);
+
             modelBuilder.Entity<EditPasswordCode>().HasKey(x => x.Id);
 
             modelBuilder.Entity<RefreshTokenModel>().HasKey(x => x.Id);
