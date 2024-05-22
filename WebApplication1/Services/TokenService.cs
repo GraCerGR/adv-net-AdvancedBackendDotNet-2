@@ -67,8 +67,8 @@ namespace User_Service.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-            new Claim(ClaimTypes.Name, userId.ToString()),
-            new Claim(ClaimTypes.Role, role),
+            //new Claim(ClaimTypes.Name, userId.ToString()),
+            //new Claim(ClaimTypes.Role, role),
             new Claim("TokenType", "Refresh")
         }),
                 Expires = refreshExpires,
