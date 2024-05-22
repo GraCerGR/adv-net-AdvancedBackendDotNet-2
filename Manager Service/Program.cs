@@ -65,6 +65,7 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 app.UseExceptionHandlerMiddleware();
+app.UseMiddleware<TokenMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
