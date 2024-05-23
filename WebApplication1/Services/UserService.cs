@@ -230,12 +230,12 @@ namespace User_Service.Services
                 editUserModel.Birthdate = editUserModel.Birthdate.Value.ToUniversalTime();
             }
 
-            user.Name = editUserModel?.Name;
-            user.Email = editUserModel?.Email;
-            user.Birthdate = editUserModel?.Birthdate;
-            user.Gender = editUserModel?.Gender;
+            user.Name = editUserModel.Name;
+            user.Email = editUserModel.Email;
+            user.Birthdate = editUserModel.Birthdate;
+            user.Gender = editUserModel.Gender;
             user.Citizenship = editUserModel?.Citizenship;
-            user.PhoneNumber = editUserModel?.PhoneNumber;
+            user.PhoneNumber = editUserModel.PhoneNumber;
 
             await _context.SaveChangesAsync();
 

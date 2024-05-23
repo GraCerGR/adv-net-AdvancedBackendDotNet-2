@@ -6,11 +6,11 @@ namespace User_Service.Models
     {
 
         [MinLength(1)]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         [MinLength(1)]
         [EmailAddress]
-        public string? Email { get; set; }
+        public string Email { get; set; }
 
         public DateTime? Birthdate { get; set; }
 
