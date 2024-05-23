@@ -34,7 +34,7 @@ namespace Manager_Service.Controllers
 
                         var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            return await _applicationsService.GetApplication(applicationSearchModel, AuthorizeuserId.ToGuid());
+            return await _applicationsService.GetApplication(applicationSearchModel, Guid.Parse(AuthorizeuserId));
         }
 
         //Создать заявку
@@ -47,7 +47,7 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            return await _applicationsService.CreateApplication(AuthorizeuserId.ToGuid());
+            return await _applicationsService.CreateApplication(Guid.Parse(AuthorizeuserId));
         }
 
         //Удалить заявку
@@ -60,7 +60,7 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _applicationsService.DeleteApplication(AuthorizeuserId.ToGuid(), null);
+            await _applicationsService.DeleteApplication(Guid.Parse(AuthorizeuserId), null);
         }
 
         //Удалить заявку пользователя с id UserId
@@ -73,7 +73,7 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _applicationsService.DeleteApplication(userId, AuthorizeuserId.ToGuid());
+            await _applicationsService.DeleteApplication(userId, Guid.Parse(AuthorizeuserId));
         }
 
         //Назначить менеджера (себя) на заявление

@@ -89,7 +89,7 @@ namespace Manager_Service.Services
             return programPagedListModel;
         }
 
-        public async Task CreateQueuePrograms(Guid userId, List<Guid> programs)
+        public async Task CreateQueuePrograms(Guid userId, List<Guid> programs, Guid? managerId)
         {
             int queueProgramsLimit = _config.GetValue<int>("QueueProgramsLimit");
 
@@ -120,38 +120,39 @@ namespace Manager_Service.Services
                 }
             }
 
-            var ExistingApplication = await _context.Applications.FirstOrDefaultAsync(u => u.Applicant.ToString() == userId.ToString());
-
-            if (ExistingApplication != null)
+            if (managerId != null)
             {
-                var ex = new Exception();
-                ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "The application has already been created. Delete the previous application to change the program queue");
-                throw ex;
+                var ExistingApplication = await _context.Applications.FirstOrDefaultAsync(u => u.Applicant.ToString() == userId.ToString());
+
+                if (ExistingApplication == null || ExistingApplication.Manager != managerId)
+                {
+                    var ex = new Exception();
+                    ex.Data.Add(StatusCodes.Status409Conflict.ToString(), "You are not the manager of this applicant");
+                    throw ex;
+                }
             }
 
-            _context.QueuePrograms.RemoveRange(_context.QueuePrograms.Where(qp => qp.UserId == userId));
-            await _context.SaveChangesAsync();
+            /*            _context.QueuePrograms.RemoveRange(_context.QueuePrograms.Where(qp => qp.UserId == userId));
+                        await _context.SaveChangesAsync();*/
 
-            QueueProgramsModel queue = new QueueProgramsModel
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                Queue = programs
-            };
 
-            try
+            var ExistingQuery = await _context.QueuePrograms.FirstOrDefaultAsync(u => u.UserId.ToString() == userId.ToString());
+            if (ExistingQuery == null)
             {
+                QueueProgramsModel queue = new QueueProgramsModel
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = userId,
+                    Queue = programs
+                };
+
                 await _context.QueuePrograms.AddAsync(queue);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex)
+            else
             {
-                var innerException = ex.InnerException;
-                while (innerException != null)
-                {
-                    Console.WriteLine("Inner Exception: " + innerException.Message);
-                    innerException = innerException.InnerException;
-                }
+                ExistingQuery.Queue = programs;
+                await _context.SaveChangesAsync();
             }
         }
 

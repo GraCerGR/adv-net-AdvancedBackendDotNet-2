@@ -35,7 +35,7 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _programsService.CreateQueuePrograms(AuthorizeuserId.ToGuid(), programs);
+            await _programsService.CreateQueuePrograms(Guid.Parse(AuthorizeuserId), programs, null);
         }
 
         //Создать чужой приоритет программ (пользователю с id userId)
@@ -50,7 +50,7 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _programsService.CreateQueuePrograms(userId, programs);
+            await _programsService.CreateQueuePrograms(userId, programs, Guid.Parse(AuthorizeuserId));
         }
 
         //Получить свой приоритет программ
@@ -66,7 +66,7 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            return await _programsService.GetQueuePrograms(AuthorizeuserId.ToGuid());
+            return await _programsService.GetQueuePrograms(Guid.Parse(AuthorizeuserId));
         }
 
         //Получить чужой приоритет программ (пользователя с id userId)
@@ -92,18 +92,5 @@ namespace Manager_Service.Controllers
         {
             return await _programsService.GetPrograms(programSearchModel);
         }*/
-    }
-
-
-    public static class GuidExtensions
-    {
-        public static Guid ToGuid(this object obj)
-        {
-            if (obj != null)
-            {
-                return Guid.Parse(obj.ToString());
-            }
-            throw new ArgumentNullException(nameof(obj), "Object is null");
-        }
     }
 }
