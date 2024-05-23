@@ -4,12 +4,19 @@ using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace MVC.Controllers
 {
     public class UserController : Controller
     {
         public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult EditUserInfo()
         {
             return View();
         }
@@ -85,6 +92,36 @@ namespace MVC.Controllers
                     Response.Cookies.Append("accessToken", tokenResponse.accessToken);
                     HttpContext.Session.SetString("refreshToken", tokenResponse.refreshToken);
 
+                    return RedirectToAction("UserInfo");
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка: " + response.StatusCode);
+                    ViewData["ErrorMessage"] = response.ToString();
+                    return View("Error");
+                }
+            }
+        }
+
+        async public Task<IActionResult> SaveUserInfo(EditUserModel updatedUser)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7101/");
+                client.DefaultRequestHeaders.Add("accept", "text/plain");
+                string accessToken = Request.Cookies["accessToken"];
+                string refreshToken = HttpContext.Session.GetString("refreshToken");
+
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
+
+                var json = JsonConvert.SerializeObject(updatedUser);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PutAsync("user/User/profile", content);
+
+                if (response.IsSuccessStatusCode)
+                {
                     return RedirectToAction("UserInfo");
                 }
                 else

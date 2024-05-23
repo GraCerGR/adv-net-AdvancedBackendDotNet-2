@@ -10,19 +10,20 @@
     {
 
         <div>
-            <p><strong>Имя :</strong> @Model.Name</p>
+            <p><strong>Имя:</strong> @Model.Name</p>
             <p><strong>Email:</strong> @Model.Email</p>
             <p><strong>Дата рождения:</strong> @Model.Birthdate</p>
             <p><strong>Пол:</strong> @Model.Gender</p>
             <p><strong>Гражданство:</strong> @Model.Citizenship</p>
             <p><strong>Номер телефона:</strong> @Model.PhoneNumber</p>
         </div>
+        <a href="@Url.Action("EditUserInfo", "User")" class="btn btn-primary">Изменить</a>
     }
 </body>
 
-@section Scripts {
+@*@section Scripts {
     <script>
         var refreshToken = '@Html.Raw(ViewBag.ResponseContent)';
         localStorage.setItem("refreshToken", refreshToken);
-    </script>
-}
+    </script>                       
+}*@

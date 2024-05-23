@@ -1,0 +1,23 @@
+﻿@model MVC.Models.EditUserModel
+@{
+    ViewData["Title"] = "EditUserInfo";
+}
+<h2>Редактировать информацию о пользователе</h2>
+@using (Html.BeginForm("SaveUserInfo", "User"))
+{
+    <div>
+        <p><strong>Имя:</strong> @Html.TextBoxFor(model => model.Name)</p>
+        <p><strong>Email:</strong> @Html.TextBoxFor(model => model.Email)</p>
+        <p><strong>Дата рождения:</strong> @Html.TextBoxFor(model => model.Birthdate, new { type = "date" })</p>
+        <p>
+            <strong>Пол:</strong> @Html.DropDownListFor(model => model.Gender, new List<SelectListItem>
+        {
+        new SelectListItem { Text = "Мужчина", Value = "Male" },
+        new SelectListItem { Text = "Женщина", Value = "Female" }
+        }, "Выберите гендер")
+        </p>
+        <p><strong>Гражданство:</strong> @Html.TextBoxFor(model => model.Citizenship)</p>
+        <p><strong>Номер телефона:</strong> @Html.TextBoxFor(model => model.PhoneNumber)</p>
+    </div>
+    <button type="submit">Сохранить</button>
+}
