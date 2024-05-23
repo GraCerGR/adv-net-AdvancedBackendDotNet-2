@@ -10,6 +10,9 @@ using User_Service.Models;
 using User_Service.Services;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;
+using RabbitMQ.Client;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace Manager_Service.Services
 {
@@ -38,6 +41,13 @@ namespace Manager_Service.Services
 
             var user = await _contextU.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId.ToString());
             if (user == null)
+            {
+                var ex = new Exception();
+                ex.Data.Add(StatusCodes.Status404NotFound.ToString(), "User not exists");
+                throw ex;
+            }
+
+            if (FindUser(userId) == null)
             {
                 var ex = new Exception();
                 ex.Data.Add(StatusCodes.Status404NotFound.ToString(), "User not exists");
@@ -400,6 +410,35 @@ namespace Manager_Service.Services
                 Citizenship = userModel.Citizenship,
                 PhoneNumber = userModel.PhoneNumber
             };
+        }
+
+        public async Task FindUser(Guid userId)
+        {
+            var factory = new ConnectionFactory()
+            {
+                HostName = "localhost",
+                Port = 5672,
+                UserName = "guest",
+                Password = "guest"
+            };
+
+
+            using var connection = factory.CreateConnection();
+            using var channel = connection.CreateModel();
+            //Console.WriteLine("Письмо отправлено");
+
+            channel.QueueDeclare(queue: "UserCheckQueue",
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null);
+
+            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(userId));
+
+            channel.BasicPublish(exchange: "",
+            routingKey: "UserCheckQueue",
+            basicProperties: null,
+            body: body);
         }
     }
 }
