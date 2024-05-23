@@ -1,0 +1,12 @@
+﻿@model string
+@{
+    ViewData["Title"] = "SendCode";
+}
+<h2>Введите код, отправленный на вашу почту</h2>
+@using (Html.BeginForm("SendCode", "User"))
+{
+    <div>
+        <p><strong>Код:</strong> @Html.TextBox("Code")</p>
+    </div>
+    <button type="submit">Изменить пароль</button>
+}

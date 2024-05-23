@@ -1,0 +1,13 @@
+﻿@model MVC.Models.EditPasswordModel
+@{
+    ViewData["Title"] = "EditUserPassword";
+}
+<h2>Редактировать информацию о пользователе</h2>
+@using (Html.BeginForm("SaveUserPassword", "User"))
+{
+    <div>
+        <p><strong>Старый пароль:</strong> @Html.TextBoxFor(model => model.OldPassword)</p>
+        <p><strong>Новый пароль:</strong> @Html.TextBoxFor(model => model.NewPassword)</p>
+    </div>
+    <button type="submit">Сохранить</button>
+}
