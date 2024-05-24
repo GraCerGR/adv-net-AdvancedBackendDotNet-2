@@ -6,33 +6,39 @@
     <h2>Import Handbook</h2>
     @using (Html.BeginForm("EducationLevels", "Handbook", FormMethod.Get))
     {
-        <input type="button" value="EducationLevels" onclick="getData('Handbook/EducationLevels', 'educationLevelsData')" />
+        <input style="margin-bottom: 5px; margin-top: 5px" type="button" value="EducationLevels" onclick="getData('Handbook/EducationLevels', 'educationLevelsData', 'educationLevelsButton')" id="educationLevelsButton" />
         <div id="educationLevelsData" style="display:none;"></div>
     }
     @using (Html.BeginForm("Faculties", "Handbook", FormMethod.Get))
     {
-        <input type="submit" value="Faculties" />
-        <div id="facultiesData" style="display:none;"></div>
+        <input style="margin-bottom: 5px; margin-top: 5px" type="button" value="Faculties" onclick="getData('Handbook/Faculties', 'FacultiesData', 'facultiesButton')" id="facultiesButton" />
+        <div id="FacultiesData" style="display:none;"></div>
     }
     @using (Html.BeginForm("Programs", "Handbook", FormMethod.Get))
     {
-        <input type="submit" value="Programs" />
-        <div id="programsData" style="display:none;"></div>
+        <input style="margin-bottom: 5px; margin-top: 5px" type="button" value="Programs" onclick="getData('Handbook/Programs', 'ProgramsData', 'programsButton')" id="programsButton" />
+        <div id="ProgramsData" style="display:none;"></div>
     }
     @using (Html.BeginForm("DocumentTypes", "Handbook", FormMethod.Get))
     {
-        <input type="submit" value="DocumentTypes" />
-        <div id="documentTypesData" style="display:none;"></div>
+        <input style="margin-bottom: 5px; margin-top: 5px" type="button" value="DocumentTypes" onclick="getData('Handbook/DocumentTypes', 'DocumentTypesData', 'documentTypesButton')" id="documentTypesButton" />
+        <div id="DocumentTypesData" style="display:none;"></div>
     }
 </body>
 
 <script>
-    function getData(endpoint, targetId) {
+    function getData(endpoint, targetId, buttonId) {
+        var button = document.getElementById(buttonId);
+
+        button.disabled = true;
+
         fetch(`/${endpoint}`)
             .then(response => response.text())
             .then(data => {
                 document.getElementById(targetId).innerHTML = data;
                 document.getElementById(targetId).style.display = 'block';
+
+                button.disabled = false;
             })
             .catch(error => console.error('Error:', error));
     }

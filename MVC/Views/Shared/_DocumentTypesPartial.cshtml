@@ -1,0 +1,21 @@
+﻿@model List<EducationDocumentTypeModel>
+
+<div style="margin-bottom: 10px; margin-top: 10px">
+    <table>
+        <tr>
+            <th style="border:solid; border-width:thin">Id</th>
+            <th style="border:solid; border-width:thin">CreateTime</th>
+            <th style="border:solid; border-width:thin">Name</th>
+            <th style="border:solid; border-width:thin">EducationLevel</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="border:solid; border-width:thin">@item.Id</td>
+                <th style="border:solid; border-width:thin">@item.CreateTime</th>
+                <td style="border:solid; border-width:thin">@item.Name</td>
+                <td style="border:solid; border-width:thin">@item.EducationLevel.Name</td>
+            </tr>
+        }
+    </table>
+</div>
