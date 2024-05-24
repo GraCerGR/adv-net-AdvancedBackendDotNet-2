@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "Import";
+}
+
+<body>
+    <h2>Import Handbook</h2>
+    @using (Html.BeginForm("EducationLevels", "Handbook", FormMethod.Get))
+    {
+        <input type="button" value="EducationLevels" onclick="getData('Handbook/EducationLevels', 'educationLevelsData')" />
+        <div id="educationLevelsData" style="display:none;"></div>
+    }
+    @using (Html.BeginForm("Faculties", "Handbook", FormMethod.Get))
+    {
+        <input type="submit" value="Faculties" />
+        <div id="facultiesData" style="display:none;"></div>
+    }
+    @using (Html.BeginForm("Programs", "Handbook", FormMethod.Get))
+    {
+        <input type="submit" value="Programs" />
+        <div id="programsData" style="display:none;"></div>
+    }
+    @using (Html.BeginForm("DocumentTypes", "Handbook", FormMethod.Get))
+    {
+        <input type="submit" value="DocumentTypes" />
+        <div id="documentTypesData" style="display:none;"></div>
+    }
+</body>
+
+<script>
+    function getData(endpoint, targetId) {
+        fetch(`/${endpoint}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById(targetId).innerHTML = data;
+                document.getElementById(targetId).style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>

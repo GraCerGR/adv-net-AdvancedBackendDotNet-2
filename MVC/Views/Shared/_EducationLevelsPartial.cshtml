@@ -1,0 +1,11 @@
+﻿@model List<EducationLevelModel>
+
+@if (Model != null && Model.Any())
+{
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>@item.Name</li>
+        }
+    </ul>
+}
