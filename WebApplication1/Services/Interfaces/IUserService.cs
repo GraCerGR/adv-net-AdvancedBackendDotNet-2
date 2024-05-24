@@ -9,6 +9,8 @@ namespace User_Service.Services.Interfaces
 
         Task<TokenResponse> LoginUser(LoginCredentials credentials);
 
+        Task LogoutUser(Guid userId, string accessToken, string token);
+
 
  //       Task LogoutUser(string token);
         Task<UserDto> EditProfile(EditUserModel editUserModel, string userId);

@@ -8,6 +8,8 @@ using User_Service.Models.DTO;
 using User_Service.Services;
 using User_Service.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using User_Service.Migrations;
 
 
 namespace WebApplication1.Controllers
@@ -35,6 +37,30 @@ namespace WebApplication1.Controllers
         public async Task<TokenResponse> LoginUser(LoginCredentials credentials)
         {
             return await _userService.LoginUser(credentials);
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+
+        public async Task<string> LogoutUser()
+        {
+            string authorizationHeader = Request.Headers["Authorization"];
+            string bearerToken = authorizationHeader.Substring("Bearer ".Length);
+            var userId = await _userService.GetUserIdFromToken(bearerToken);
+
+            string refreshTokenHeader = Request.Headers["Refresh-token"];
+            if (refreshTokenHeader != null)
+            {
+                string refreshToken = refreshTokenHeader.Substring("".Length);
+                await _userService.LogoutUser(Guid.Parse(userId), bearerToken, refreshToken);
+                return "The refresh token has been detected. Logged out of this session";
+            }
+            else
+            {
+                await _userService.LogoutUser(Guid.Parse(userId), bearerToken, null);
+                return "The refresh token was not detected. Logged out of all sessions";
+            }
+
         }
 
 

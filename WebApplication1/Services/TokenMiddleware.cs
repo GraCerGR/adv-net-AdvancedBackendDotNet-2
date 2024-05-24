@@ -6,6 +6,7 @@ using User_Service.Services.Interfaces;
 using User_Service.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using User_Service.Migrations;
 
 namespace User_Service.Services
 {
@@ -29,16 +30,25 @@ namespace User_Service.Services
 
             if (accessToken != null)
             {
-                var token = new JwtSecurityTokenHandler().ReadToken(accessToken) as JwtSecurityToken;
-                if (token.ValidTo.Subtract(DateTime.UtcNow) < TimeSpan.FromSeconds(0))
+                using (var scope = context.RequestServices.CreateScope())
                 {
-                    string refreshToken = context.Request.Headers["Refresh-Token"];
+                    var userService = scope.ServiceProvider.GetRequiredService<ITokenService>();
 
-                    using (var scope = context.RequestServices.CreateScope())
+                    ApplicationContext _context = context.RequestServices.GetRequiredService<ApplicationContext>();
+
+                    var revorkedToke = await _context.AccessTokensRevoked.FirstOrDefaultAsync(u => u.AccessToken == accessToken);
+
+                    if (revorkedToke != null)
                     {
-                        var userService = scope.ServiceProvider.GetRequiredService<ITokenService>();
+                        var ex = new Exception();
+                        ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "The token is invalid");
+                        throw ex;
+                    }
 
-                        ApplicationContext _context = context.RequestServices.GetRequiredService<ApplicationContext>();
+                    var token = new JwtSecurityTokenHandler().ReadToken(accessToken) as JwtSecurityToken;
+                    if (token.ValidTo.Subtract(DateTime.UtcNow) < TimeSpan.FromSeconds(0))
+                    {
+                        string refreshToken = context.Request.Headers["Refresh-Token"];
 
                         var user = await _context.RefreshTokens.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 

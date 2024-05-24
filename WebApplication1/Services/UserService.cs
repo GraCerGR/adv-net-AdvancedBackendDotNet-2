@@ -132,13 +132,14 @@ namespace User_Service.Services
             TokenModel accessToken = await _tokenService.GenerateAccessToken(userEntity.Id, role);
             TokenModel refreshToken = await _tokenService.GenerateRefreshToken(userEntity.Id, role);
 
-            var refTokenDB = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
+            //Это не нужно, так как на один аккаунт можно зайти с разных устройств
+/*            var refTokenDB = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.UserId == userEntity.Id);
 
             if (refTokenDB != null) //Удаление прошлых рефреш токенов
             {
                 _context.RefreshTokens.Remove(refTokenDB);
                 await _context.SaveChangesAsync();
-            }
+            }*/
 
             RefreshTokenModel tokenDB = new RefreshTokenModel
             {
@@ -173,6 +174,39 @@ namespace User_Service.Services
             return result;
         }
 
+        public async Task LogoutUser(Guid userId, string accessToken, string token)
+        {
+            if (token == null)
+            {
+                var usersToDelete = await _context.RefreshTokens.Where(u => u.UserId.ToString() == userId.ToString()).ToListAsync();
+
+                if (usersToDelete != null && usersToDelete.Any())
+                {
+                    _context.RefreshTokens.RemoveRange(usersToDelete);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            else
+            {
+                var usersToDelete = await _context.RefreshTokens.Where(u => (u.UserId.ToString() == userId.ToString() && u.RefreshToken.ToString() == token.ToString())).ToListAsync();
+
+                if (usersToDelete != null && usersToDelete.Any())
+                {
+                    _context.RefreshTokens.RemoveRange(usersToDelete);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            LoggoutTokenModel revorkedToken = new LoggoutTokenModel
+            {
+                Id = Guid.NewGuid(),
+                AccessToken = accessToken,
+            };
+
+            await _context.AccessTokensRevoked.AddAsync(revorkedToken);
+            await _context.SaveChangesAsync();
+
+        }
 
         public async Task<UserDto> GetProfile(string userId)
         {

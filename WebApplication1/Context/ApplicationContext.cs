@@ -19,6 +19,8 @@ namespace User_Service.Context
 
         public DbSet<RefreshTokenModel> RefreshTokens { get; set; }
 
+        public DbSet<LoggoutTokenModel> AccessTokensRevoked{ get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserModel>().HasKey(x => x.Id);
@@ -31,6 +33,8 @@ namespace User_Service.Context
             modelBuilder.Entity<EditPasswordCode>().HasKey(x => x.Id);
 
             modelBuilder.Entity<RefreshTokenModel>().HasKey(x => x.Id);
+
+            modelBuilder.Entity<LoggoutTokenModel>().HasKey(x => x.Id);
         }
     }
 }
