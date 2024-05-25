@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Programs";
+}
+
+<body>
+    <h2>Programs</h2>
+
+    @model MVC.Models.Programs.ProgramSearchModel
+
+    <form asp-controller="Programs" asp-action="SearchPrograms" id="searchForm">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Faculty">Факультет</label>
+                    <input asp-for="Faculty" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="EducationLevel">Уровень образования</label>
+                    <input asp-for="EducationLevel" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="EducationForm">Форма обучения</label>
+                    <input asp-for="EducationForm" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Language">Язык обучения</label>
+                    <input asp-for="Language" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Code">Код программы</label>
+                    <input asp-for="Code" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Name">Название программы</label>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Page">Страница</label>
+                    <input asp-for="Page" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Size">Количество записей на странице</label>
+                    <input asp-for="Size" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary mt-4" id="SearchButton">Поиск</button>
+            </div>
+        </div>
+    </form>
+
+    <div id="searchResults"></div>
+
+    <div id="SearchProgramsData" style="display:none;"></div>
+
+</body>
+
+@section Scripts{
+<script>
+        $(document).ready(function () {
+            $('#searchForm').submit(function (event) {
+                event.preventDefault(); // Предотвращаем стандартное действие отправки формы
+                var formData = $(this).serialize(); // Сериализуем данные формы
+                $.ajax({
+                    type: 'POST', // Используем метод POST для отправки данных
+                    url: $(this).attr('action'), // Получаем URL из атрибута action формы
+                    data: formData, // Передаем сериализованные данные
+                    success: function (data) {
+                        $('#searchResults').html(data); // Заменяем содержимое блока результатов новыми данными
+                    }
+                });
+            });
+        });
+</script>
+}
