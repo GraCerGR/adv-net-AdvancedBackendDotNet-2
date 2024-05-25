@@ -34,7 +34,9 @@ namespace Manager_Service.Services
 
         public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms(ProgramSearchModel programSearchModel)
         {
-            IQueryable<Handbook_Service.Models.EducationProgramModel> query = _contextH.EducationPrograms as IQueryable<Handbook_Service.Models.EducationProgramModel>;
+            //IQueryable<Handbook_Service.Models.EducationProgramModel> query = _contextH.EducationPrograms as IQueryable<Handbook_Service.Models.EducationProgramModel>;
+
+            IQueryable<Handbook_Service.Models.EducationProgramModel> query = _contextH.EducationPrograms.Include(p => p.Faculty).Include(p => p.EducationLevel);
 
             if (!string.IsNullOrEmpty(programSearchModel.Faculty))
             {
@@ -89,7 +91,7 @@ namespace Manager_Service.Services
             return programPagedListModel;
         }
 
-        public async Task CreateQueuePrograms(Guid userId, List<Guid> programs, Guid? managerId)
+        public async Task<IActionResult> CreateQueuePrograms(Guid userId, List<Guid> programs, Guid? managerId)
         {
             int queueProgramsLimit = _config.GetValue<int>("QueueProgramsLimit");
 
@@ -154,6 +156,8 @@ namespace Manager_Service.Services
                 ExistingQuery.Queue = programs;
                 await _context.SaveChangesAsync();
             }
+
+            return new OkObjectResult(programs);
         }
 
         public async Task<IQueryable<QueueProgramsModel>> GetQueuePrograms(Guid userId)

@@ -47,12 +47,12 @@ namespace Manager_Service.Services
                 throw ex;
             }
 
-            if (FindUser(userId) == null)
+/*            if (FindUser(userId) == null)
             {
                 var ex = new Exception();
                 ex.Data.Add(StatusCodes.Status404NotFound.ToString(), "User not exists");
                 throw ex;
-            }
+            }*/
 
             var ExistingApplicant = await _context.Applications.FirstOrDefaultAsync(a => a.Applicant == userId);
             if (ExistingApplicant != null)
@@ -412,7 +412,7 @@ namespace Manager_Service.Services
             };
         }
 
-        public async Task FindUser(Guid userId)
+/*        public async Task FindUser(Guid userId)
         {
             var factory = new ConnectionFactory()
             {
@@ -439,6 +439,6 @@ namespace Manager_Service.Services
             routingKey: "UserCheckQueue",
             basicProperties: null,
             body: body);
-        }
+        }*/
     }
 }

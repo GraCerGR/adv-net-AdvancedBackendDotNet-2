@@ -66,7 +66,7 @@ namespace Manager_Service.Controllers
         //Удалить заявку пользователя с id UserId
         [HttpDelete("{userId}")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
-        public async Task DeleteApplicationBy([FromBody] Guid userId)
+        public async Task DeleteApplicationBy([FromRoute] Guid userId)
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
@@ -79,7 +79,7 @@ namespace Manager_Service.Controllers
         //Назначить менеджера (себя) на заявление
         [HttpPost("{applicationId}/assign-manager")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
-        public async Task<IActionResult> AssignManagerToApplication([FromBody] Guid applicationId)
+        public async Task<IActionResult> AssignManagerToApplication([FromRoute] Guid applicationId)
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
@@ -94,7 +94,7 @@ namespace Manager_Service.Controllers
         //Назначить менеджера (другого) на заявление
         [HttpPost("{applicationId}/assign-manager-by")]
         [Authorize(Roles = "MainManager, Admin")]
-        public async Task<IActionResult> AssignManagerToApplicationBy([FromBody] Guid applicationId, [Required] Guid managerId)
+        public async Task<IActionResult> AssignManagerToApplicationBy([FromRoute] Guid applicationId, [Required] Guid managerId)
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
@@ -109,7 +109,7 @@ namespace Manager_Service.Controllers
         //Удалить менеджера (себя) с заявления
         [HttpDelete("{applicationId}/assign-manager")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
-        public async Task<IActionResult> DeleteManagerToApplication([FromBody] Guid applicationId)
+        public async Task<IActionResult> DeleteManagerToApplication([FromRoute] Guid applicationId)
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
@@ -124,7 +124,7 @@ namespace Manager_Service.Controllers
         //Установить статус заявления
         [HttpPost("{applicationId}/status")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
-        public async Task<IActionResult> SetStatus([FromBody] Guid applicationId, Status status)
+        public async Task<IActionResult> SetStatus([FromRoute] Guid applicationId, Status status)
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);

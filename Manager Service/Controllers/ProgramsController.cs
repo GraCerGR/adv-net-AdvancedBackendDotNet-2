@@ -25,7 +25,7 @@ namespace Manager_Service.Controllers
         //Создать приоритет программ (свой)
         [HttpPost("queue")]
         [Authorize]
-        public async Task CreateQueuePrograms(List<Guid> programs)
+        public async Task<IActionResult> CreateQueuePrograms(List<Guid> programs)
         {
             
             string authorizationHeader = Request.Headers["Authorization"];
@@ -35,7 +35,7 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _programsService.CreateQueuePrograms(Guid.Parse(AuthorizeuserId), programs, null);
+            return await _programsService.CreateQueuePrograms(Guid.Parse(AuthorizeuserId), programs, null);
         }
 
         //Создать чужой приоритет программ (пользователю с id userId)
@@ -85,8 +85,8 @@ namespace Manager_Service.Controllers
             return await _programsService.GetQueuePrograms(userId);
         }
 
-        //Получить все программы (конфликт с Get в Application)
-/*        [HttpGet("programs")]
+/*        //Получить все программы (конфликт с Get в Application)
+        [HttpGet("programs")]
         //[Authorize]
         public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms([FromQuery] ProgramSearchModel programSearchModel)
         {

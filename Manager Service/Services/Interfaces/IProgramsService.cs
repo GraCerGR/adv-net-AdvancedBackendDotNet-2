@@ -9,7 +9,7 @@ namespace Manager_Service.Services.Interfaces
     {
         Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms(ProgramSearchModel programSearchModel);
 
-        Task CreateQueuePrograms(Guid userId, List<Guid> programs, Guid? managerId);
+        Task<IActionResult> CreateQueuePrograms(Guid userId, List<Guid> programs, Guid? managerId);
 
         Task<IQueryable<QueueProgramsModel>> GetQueuePrograms(Guid userId);
     }
