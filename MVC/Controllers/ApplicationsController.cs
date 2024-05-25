@@ -1,8 +1,11 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models.Handbook;
 using MVC.Models.Programs;
+using Newtonsoft.Json;
 
 namespace MVC.Controllers
 {
@@ -51,8 +54,46 @@ namespace MVC.Controllers
                     return View("Error");
                 }
             }
+        }
 
-            return View(searchModel);
+        public async Task<IActionResult> AssignManager(Guid userId, Guid ApplicationId)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7122");
+                client.DefaultRequestHeaders.Add("accept", "text/plain");
+                string accessToken = Request.Cookies["accessToken"];
+                string refreshToken = HttpContext.Session.GetString("refreshToken");
+
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
+
+                var json = JsonConvert.SerializeObject(userId);
+                var contentM = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response;
+
+                if (userId == Guid.Empty)
+                {
+                    response = await client.PostAsync($"/api/Applications/{ApplicationId}/assign-manager", null);
+                }
+                else
+                {
+                    response = await client.PostAsync($"/api/Applications/{ApplicationId}/assign-manager-by?managerId={userId}", null);
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return PartialView("AssignManager", content.ToString());
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка: " + response.StatusCode);
+                    ViewData["ErrorMessage"] = response.ToString();
+                    return View("Error");
+                }
+            }
         }
 
         public async Task<List<string>> ConvertStringToList(string input)

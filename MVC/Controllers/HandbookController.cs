@@ -33,7 +33,7 @@ namespace MVC.Controllers
                     var ContentResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EducationLevelModel>>(Content);
 
 
-                    return PartialView("EducationLevelsPartial", ContentResponse);
+                    return PartialView("CreateQuery", ContentResponse);
                 }
                 else
                 {
