@@ -53,7 +53,16 @@ namespace MVC.Controllers
                 var json = JsonConvert.SerializeObject(programs);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync("/api/Programs/queue", content);
+                HttpResponseMessage response;
+
+                if (userId == Guid.Empty)
+                {
+                    response = await client.PostAsync("/api/Programs/queue", content);
+                }
+                else
+                {
+                    response = await client.PostAsync($"/api/Programs/queue/{userId}", content);
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
