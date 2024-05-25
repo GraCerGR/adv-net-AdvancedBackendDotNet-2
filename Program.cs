@@ -22,8 +22,10 @@ builder.Configuration.AddJsonFile("appsettings.json");
 string jwtSecret = builder.Configuration["TokenSettings:JwtSecret"];
 string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];
 // Add services to the container.
+builder.Services.AddSingleton<ITokenService>(new TokenService(jwtSecret, refreshSecret));
+builder.Services.AddScoped(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<IHandbookService, HandbookService>();
-builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
+//builder.Services.AddSingleton<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
