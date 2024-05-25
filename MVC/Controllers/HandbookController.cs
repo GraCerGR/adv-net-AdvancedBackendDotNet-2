@@ -33,7 +33,7 @@ namespace MVC.Controllers
                     var ContentResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EducationLevelModel>>(Content);
 
 
-                    return PartialView("_EducationLevelsPartial", ContentResponse);
+                    return PartialView("EducationLevelsPartial", ContentResponse);
                 }
                 else
                 {
@@ -65,7 +65,7 @@ namespace MVC.Controllers
                     var ContentResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FacultyModel>>(Content);
 
 
-                    return PartialView("_FacultiesPartial", ContentResponse);
+                    return PartialView("FacultiesPartial", ContentResponse);
                 }
                 else
                 {
@@ -97,7 +97,7 @@ namespace MVC.Controllers
                     var ContentResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<EducationDocumentTypeModel>>(Content);
 
 
-                    return PartialView("_DocumentTypesPartial", ContentResponse);
+                    return PartialView("DocumentTypesPartial", ContentResponse);
                 }
                 else
                 {
@@ -126,7 +126,7 @@ namespace MVC.Controllers
                 {
                     var Content = await response.Content.ReadAsStringAsync();
 
-                    return PartialView("_ProgramsPartial", Content);
+                    return PartialView("ProgramsPartial", Content);
                 }
                 else
                 {

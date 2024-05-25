@@ -1,0 +1,40 @@
+﻿@model MVC.Models.Programs.ApplicationPagedListModel
+
+<div style="margin-bottom: 10px; margin-top: 10px">
+    <table>
+        <tr>
+            <th style="border:solid; border-width:thin">Id</th>
+            <th style="border:solid; border-width:thin">Applicant</th>
+            <th style="border:solid; border-width:thin">QueueProgram</th>
+            <th style="border:solid; border-width:thin">Manager</th>
+            <th style="border:solid; border-width:thin">Status</th>
+            <th style="border:solid; border-width:thin">LastModification</th>
+        </tr>
+        @foreach (var item in Model.Applications)
+        {
+            <tr>
+                <th style="border:solid; border-width:thin">@item.Id</th>
+                <th style="border:solid; border-width:thin">@item.Applicant.Name</th>
+                <td style="border: solid; border-width: thin">
+                    @foreach (var guid in item.QueueProgram.Queue)
+                    {
+                        <span>@guid</span>
+                        <br />
+                    }
+                </td>
+                <td style="border: solid; border-width: thin">
+                    @if (item.Manager == null)
+                    {
+                        @item.Manager
+                    }
+                    else
+                    {
+                        @item.Manager.Name
+                    }
+                </td>
+                <td style="border:solid; border-width:thin">@item.Status</td>
+                <td style="border:solid; border-width:thin">@item.LastModification</td>
+            </tr>
+        }
+    </table>
+</div>

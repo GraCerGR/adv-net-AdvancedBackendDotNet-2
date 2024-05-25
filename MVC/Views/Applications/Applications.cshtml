@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Applications";
+}
+
+<body>
+
+    @model MVC.Models.Programs.ApplicationSearchModel
+
+    <h2>Applications</h2>
+
+    <form asp-controller="Applications" asp-action="SearchApplication" id="searchApplicationForm">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Name">Название программы</label>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="ProgramId">ID программы</label>
+                    <input asp-for="ProgramId" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="Faculty">Факультеты (введите через запятую)</label>
+                        <input type="text" class="form-control" id="Faculty" name="Faculty" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="AdmissionStatus">Статус приема</label>
+                    <select asp-for="AdmissionStatus" class="form-control">
+                        <option value="created">Создано</option>
+                        <option value="consideration">На рассмотрении</option>
+                        <option value="confirmed">Подтверждено</option>
+                        <option value="rejected">Отклонено</option>
+                        <option value="closed">Закрыто</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-check col-md-4 d-flex justify-content-center align-items-center">
+                <div class="form-group">
+                    <label for="HasNotManager">Нет менеджера</label>
+                    <input class="form-check-input" type="checkbox" asp-for="hasNotManager" />
+                </div>
+            </div>
+            <div class="form-check col-md-4 d-flex justify-content-center align-items-center">
+                <div class="form-group">
+                    <label for="MyApplicants">Мои заявки</label>
+                    <input class="form-check-input" type="checkbox" asp-for="myApplicants" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="SortByDate">Сортировка по дате</label>
+                    <select asp-for="sortByDate" class="form-control">
+                        <option value="Asc">По возрастанию</option>
+                        <option value="Desc">По убыванию</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Page">Страница</label>
+                    <input asp-for="Page" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="Size">Количество записей на странице</label>
+                    <input asp-for="Size" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4" id="SearchApplication">Поиск</button>
+    </form>
+
+    <div id="SearchApplicationD"></div>
+
+    <div id="searchApplicationData" style="display:none;"></div>
+
+    <div id="QueueForm" class="mt-4">
+        <h3>Создать очередь программ</h3>
+        <form asp-controller="Programs" asp-action="CreateQuery" id="createQueueForm">
+            <div class="form-group">
+                <label for="UserId">ID пользователя:</label>
+                <input type="text" class="form-control" id="UserId" name="UserId" />
+            </div>
+            <div class="form-group">
+                <label for="ProgramIds">ID программ:</label>
+                <input type="text" class="form-control" id="ProgramIds" name="ProgramIds" />
+                <small id="ProgramIdsHelp" class="form-text text-muted">Введите ID программ через запятую.</small>
+            </div>
+            @*<button type="submit" class="btn btn-success" id="CreateQueueButton">Создать очередь</button>*@
+            <button type="submit" class="btn btn-success" id="CreateQueueButton" formmethod="post" formaction="@Url.Action("CreateQuery", "Programs")">Создать очередь</button>
+        </form>
+    </div>
+
+    <div id="QueueResults" class="mt-4"></div>
+
+    <div id="SearchProgramsData" style="display:none;"></div>
+
+</body>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#createQueueForm').submit(function (event) {
+                event.preventDefault(); // Предотвращаем стандартное действие отправки формы
+
+                // Получаем введенные значения
+                var userId = $('#UserId').val();
+                var programIds = $('#ProgramIds').val();
+
+                // Преобразуем строку с ID программ в массив Guid
+                var programIdArray = programIds.split(',').map(function (id) {
+                    return id.trim(); // Удаляем пробелы вокруг ID
+                });
+
+                // Отправляем данные методом POST
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("CreateQuery", "Programs")',
+                    data: {
+                        programs: programIdArray,
+                        userId: userId
+                    },
+                    success: function (data) {
+                        // Очищаем результаты предыдущих запросов
+                        $('#QueueResults').empty();
+
+                        // Добавляем полученные результаты на страницу
+                        $('#QueueResults').html(data);
+                    }
+                });
+            });
+
+            // AJAX запрос для формы поиска
+            $('#searchApplicationForm').submit(function (event) {
+                event.preventDefault(); // Предотвращаем стандартное действие отправки формы
+                var formData = $(this).serialize(); // Сериализуем данные формы
+                $.ajax({
+                    type: 'POST', // Используем метод POST для отправки данных
+                    url: $(this).attr('action'), // Получаем URL из атрибута action формы
+                    data: formData, // Передаем сериализованные данные
+                    success: function (data) {
+                        $('#SearchApplicationD').empty();
+
+                        $('#SearchApplicationD').html(data); // Заменяем содержимое блока результатов новыми данными
+                    }
+                });
+            });
+        });
+    </script>
+}

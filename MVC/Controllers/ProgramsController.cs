@@ -27,7 +27,7 @@ namespace MVC.Controllers
                 {
                     var content = await response.Content.ReadAsStringAsync();
                     var contentResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<ProgramPagedListModel>(content);
-                    return PartialView("_SearchPrograms", contentResponse);
+                    return PartialView("SearchPrograms", contentResponse);
                 }
                 else
                 {
@@ -67,7 +67,7 @@ namespace MVC.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     var contentR = await response.Content.ReadAsStringAsync();
-                    return PartialView("_CreateQuery", "Success");
+                    return PartialView("CreateQuery", "Success");
                 }
                 else
                 {
