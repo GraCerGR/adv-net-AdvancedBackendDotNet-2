@@ -18,7 +18,7 @@ string jwtSecret = builder.Configuration["TokenSettings:JwtSecret"];
 string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];
 // Add services to the container.
 //builder.Services.AddScoped<IManageFileService, ManageFileService>();
-builder.Services.AddSingleton(provider => new TokenService(jwtSecret, refreshSecret));
+builder.Services.AddScoped(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<ITokenService, TokenService>(provider => new TokenService(jwtSecret, refreshSecret));
 builder.Services.AddScoped<IUserService, UserService>();
 
