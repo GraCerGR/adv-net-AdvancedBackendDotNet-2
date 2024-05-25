@@ -3,6 +3,8 @@
 <div style="margin-bottom: 10px; margin-top: 10px">
     <table>
         <tr>
+            <th style="border:solid; border-width:thin">Id</th>
+            <th style="border:solid; border-width:thin">CreateTime</th>
             <th style="border:solid; border-width:thin">Name</th>
             <th style="border:solid; border-width:thin">Code</th>
             <th style="border:solid; border-width:thin">Language</th>
@@ -13,6 +15,8 @@
         @foreach (var item in Model.Programs)
         {
             <tr>
+                <th style="border:solid; border-width:thin">@item.Id</th>
+                <th style="border:solid; border-width:thin">@item.CreateTime</th>
                 <td style="border:solid; border-width:thin">@item.Name</td>
                 <td style="border:solid; border-width:thin">@item.Code</td>
                 <td style="border:solid; border-width:thin">@item.Language</td>
