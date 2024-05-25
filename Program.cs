@@ -12,9 +12,9 @@ using WebApplication1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.json");
+/*builder.Configuration.AddJsonFile("appsettings.json");
 string jwtSecret = builder.Configuration["TokenSettings:JwtSecret"];
-string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];
+string refreshSecret = builder.Configuration["TokenSettings:RefreshSecret"];*/
 
 // Add services to the container.
 //builder.Services.AddSingleton<ITokenService>(new TokenService(jwtSecret, refreshSecret));
