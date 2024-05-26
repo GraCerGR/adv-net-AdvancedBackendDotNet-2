@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Manager";
+}
+<body>
+    <h2>Менеджеры</h2>
+
+    @model List<ManagerDto>
+    <div style="margin-bottom: 10px; margin-top: 10px">
+        <table>
+            <tr>
+                <th style="border: solid; border-width: thin">Id</th>
+                <th style="border: solid; border-width: thin">Name</th>
+                <th style="border: solid; border-width: thin">Main Manager</th>
+            </tr>
+            @foreach (var manager in Model)
+            {
+                <tr>
+                    <td style="border: solid; border-width: thin">@manager.Id</td>
+                    <td style="border: solid; border-width: thin">@manager.UserId.Name</td>
+                    <td style="border: solid; border-width: thin">@manager.MainManager</td>
+                </tr>
+            }
+        </table>
+    </div>
+</body>

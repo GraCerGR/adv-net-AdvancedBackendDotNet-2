@@ -9,7 +9,7 @@ namespace MVC.Controllers
 {
     public class ProgramsController : Controller
     {
-        public IActionResult Programs()
+        public async Task<IActionResult> Programs()
         {
             return View();
         }

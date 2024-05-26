@@ -8,7 +8,7 @@ namespace MVC.Controllers
 {
     public class HandbookController : Controller
     {
-        public IActionResult Import()
+        public async Task<IActionResult> Import()
         {
             return View();
         }

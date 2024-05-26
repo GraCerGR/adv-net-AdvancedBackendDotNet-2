@@ -12,22 +12,22 @@ namespace MVC.Controllers
 {
     public class UserController : Controller
     {
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
             return View();
         }
 
-        public IActionResult EditUserInfo()
+        public async Task<IActionResult> EditUserInfo()
         {
             return View();
         }
 
-        public IActionResult EditUserPaasword()
+        public async Task<IActionResult> EditUserPaasword()
         {
             return View();
         }
 
-        public IActionResult SendCodeView()
+        public async Task<IActionResult> SendCodeView()
         {
             return View();
         }

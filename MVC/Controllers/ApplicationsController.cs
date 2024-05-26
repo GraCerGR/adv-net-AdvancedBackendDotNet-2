@@ -12,7 +12,7 @@ namespace MVC.Controllers
 {
     public class ApplicationsController : Controller
     {
-        public IActionResult Applications()
+        public async Task<IActionResult> Applications()
         {
             return View();
         }
