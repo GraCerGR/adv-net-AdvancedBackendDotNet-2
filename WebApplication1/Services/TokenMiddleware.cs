@@ -23,7 +23,24 @@ namespace User_Service.Services
 
         public async Task Invoke(HttpContext context)
         {
-            string accessToken = context.Request.Headers["Authorization"].FirstOrDefault()?.Split("").Last().Substring("Bearer ".Length);
+            string httpMethod = context.Request.Method;
+
+            // Получить путь запроса
+            string path = context.Request.Path;
+
+            // Получить заголовки запроса
+            var headers = context.Request.Headers;
+
+            // Получить параметры запроса
+            var queryParameters = context.Request.Query;
+
+            string accessToken = context.Request.Headers["Authorization"].FirstOrDefault()?.Split("").Last().Substring("Bearer".Length).Split(" ").Last();
+            if (accessToken == "")
+            {
+                accessToken = null;
+            }
+            
+            //string accessToken = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last().Substring("Bearer ".Length);
             /*            string authorizationHeader = context.Request.Headers["Authorization"];
                         string accessToken = authorizationHeader.Substring("Bearer ".Length);*/
             /*token != nulltoken.ValidTo.Subtract(DateTime.UtcNow) < TimeSpan.FromSeconds(10)*/

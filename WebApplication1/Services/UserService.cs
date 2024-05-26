@@ -178,7 +178,7 @@ namespace User_Service.Services
         {
             if (token == null)
             {
-                var usersToDelete = await _context.RefreshTokens.Where(u => u.UserId.ToString() == userId.ToString()).ToListAsync();
+                var usersToDelete = await _context.RefreshTokens.Where(u => u.UserId== userId).ToListAsync();
 
                 if (usersToDelete != null && usersToDelete.Any())
                 {
@@ -188,7 +188,7 @@ namespace User_Service.Services
             }
             else
             {
-                var usersToDelete = await _context.RefreshTokens.Where(u => (u.UserId.ToString() == userId.ToString() && u.RefreshToken.ToString() == token.ToString())).ToListAsync();
+                var usersToDelete = await _context.RefreshTokens.Where(u => (u.UserId == userId && u.RefreshToken == token)).ToListAsync();
 
                 if (usersToDelete != null && usersToDelete.Any())
                 {
