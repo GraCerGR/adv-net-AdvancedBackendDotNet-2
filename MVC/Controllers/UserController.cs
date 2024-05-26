@@ -202,5 +202,36 @@ namespace MVC.Controllers
                 }
             }
         }
+
+        async public Task<IActionResult> Logout()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7101/");
+                client.DefaultRequestHeaders.Add("accept", "text/plain");
+                string accessToken = Request.Cookies["accessToken"];
+                string refreshToken = HttpContext.Session.GetString("refreshToken");
+
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
+
+                HttpResponseMessage response = await client.PostAsync($"user/User/logout", null);
+
+                if (response.IsSuccessStatusCode)
+                {
+
+                    Response.Cookies.Delete("accessToken");
+                    HttpContext.Session.Remove("refreshToken");
+
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка: " + response.StatusCode);
+                    ViewData["ErrorMessage"] = response.ToString();
+                    return View("Error");
+                }
+            }
+        }
     }
 }
