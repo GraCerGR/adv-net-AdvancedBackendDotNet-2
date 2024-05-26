@@ -25,7 +25,7 @@ namespace Manager_Service.Controllers
         }
 
         //Получить все заявки
-/*        [HttpGet("applications")]
+        [HttpGet("applications")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<ApplicationPagedListModel> GetApplications([FromQuery] ApplicationSearchModel applicationSearchModel)
         {
@@ -35,7 +35,7 @@ namespace Manager_Service.Controllers
                         var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
             return await _applicationsService.GetApplication(applicationSearchModel, Guid.Parse(AuthorizeuserId));
-        }*/
+        }
 
         //Создать заявку
         [HttpPost]
@@ -86,7 +86,11 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _applicationsService.ManagerApplication(applicationId, Guid.Parse(AuthorizeuserId));
+            List<MessageDto> messageData = await _applicationsService.ManagerApplication(applicationId, Guid.Parse(AuthorizeuserId));
+
+            await _userService.SendNotificationRabbitMQ(messageData[0]);
+
+            await _userService.SendNotificationRabbitMQ(messageData[1]);
 
             return Ok("Manager assigned successfully");
         }
@@ -101,7 +105,11 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _applicationsService.ManagerApplication(applicationId, managerId);
+            List<MessageDto> messageData = await _applicationsService.ManagerApplication(applicationId, managerId);
+
+            await _userService.SendNotificationRabbitMQ(messageData[0]);
+
+            await _userService.SendNotificationRabbitMQ(messageData[1]);
 
             return Ok("Manager assigned successfully");
         }
@@ -116,7 +124,11 @@ namespace Manager_Service.Controllers
 
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
-            await _applicationsService.DeleteManagerApplication(applicationId, Guid.Parse(AuthorizeuserId));
+            List<MessageDto> messageData = await _applicationsService.DeleteManagerApplication(applicationId, Guid.Parse(AuthorizeuserId));
+
+            await _userService.SendNotificationRabbitMQ(messageData[0]);
+
+            await _userService.SendNotificationRabbitMQ(messageData[1]);
 
             return Ok("You refused admission");
         }

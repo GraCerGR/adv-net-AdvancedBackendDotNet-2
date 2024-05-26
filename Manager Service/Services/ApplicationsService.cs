@@ -231,7 +231,7 @@ namespace Manager_Service.Services
             return applicationPageListModel;
         }
 
-        public async Task ManagerApplication(Guid appplicationId, Guid managerId)
+        public async Task<List<MessageDto>> ManagerApplication(Guid appplicationId, Guid managerId)
         {
             var application = await _context.Applications.FirstOrDefaultAsync(q => q.Id.ToString() == appplicationId.ToString());
             if (application == null)
@@ -271,10 +271,34 @@ namespace Manager_Service.Services
                 }
             }
 
-            return;
+            var managerEmail = await _contextU.Users.FirstOrDefaultAsync(q => q.Id.ToString() == managerId.ToString());
+
+            var applicantEmail = await _contextU.Users.FirstOrDefaultAsync(q => q.Id.ToString() == application.Applicant.ToString());
+
+            var messageManagerData = new MessageDto
+            {
+                Id = Guid.NewGuid(),
+                Email = managerEmail.Email,
+                Message = $"You have been appointed as a manager for: {applicantEmail.Name}"
+            };
+
+            var messageApplicantData = new MessageDto
+            {
+                Id = Guid.NewGuid(),
+                Email = applicantEmail.Email,
+                Message = $"You have been assigned a manager: {managerEmail.Name}"
+            };
+
+            List<MessageDto> messageData = new List<MessageDto>
+            {
+                messageManagerData,
+                messageApplicantData
+            };
+
+            return messageData;
         }
 
-        public async Task DeleteManagerApplication(Guid appplicationId, Guid managerId)
+        public async Task<List<MessageDto>> DeleteManagerApplication(Guid appplicationId, Guid managerId)
         {
             var application = await _context.Applications.FirstOrDefaultAsync(q => q.Id.ToString() == appplicationId.ToString());
             if (application == null)
@@ -321,7 +345,31 @@ namespace Manager_Service.Services
                 }
             }
 
-            return;
+            var managerEmail = await _contextU.Users.FirstOrDefaultAsync(q => q.Id.ToString() == managerId.ToString());
+
+            var applicantEmail = await _contextU.Users.FirstOrDefaultAsync(q => q.Id.ToString() == application.Applicant.ToString());
+
+            var messageManagerData = new MessageDto
+            {
+                Id = Guid.NewGuid(),
+                Email = managerEmail.Email,
+                Message = $"You are no longer the manager for: {applicantEmail.Name}"
+            };
+
+            var messageApplicantData = new MessageDto
+            {
+                Id = Guid.NewGuid(),
+                Email = applicantEmail.Email,
+                Message = $"You have had your manager removed"
+            };
+
+            List<MessageDto> messageData = new List<MessageDto>
+            {
+                messageManagerData,
+                messageApplicantData
+            };
+
+            return messageData;
         }
 
         public async Task<MessageDto> SetStatus(Guid appplicationId, Guid managerId, Status status)

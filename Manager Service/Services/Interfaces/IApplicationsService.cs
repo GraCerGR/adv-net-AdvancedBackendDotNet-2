@@ -13,9 +13,9 @@ namespace Manager_Service.Services.Interfaces
 
         Task<ApplicationPagedListModel> GetApplication(ApplicationSearchModel applicationSearchModel, Guid userId);
 
-        Task ManagerApplication(Guid applicationId, Guid managerId);
+        Task<List<MessageDto>> ManagerApplication(Guid applicationId, Guid managerId);
 
-        Task DeleteManagerApplication(Guid applicationId, Guid managerId);
+        Task<List<MessageDto>> DeleteManagerApplication(Guid applicationId, Guid managerId);
 
         Task<MessageDto> SetStatus(Guid appplicationId, Guid managerId, Status status);
     }

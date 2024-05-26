@@ -85,12 +85,12 @@ namespace Manager_Service.Controllers
             return await _programsService.GetQueuePrograms(userId);
         }
 
-        //Получить все программы (конфликт с Get в Application)
+/*        //Получить все программы (конфликт с Get в Application)
         [HttpGet("programs")]
         //[Authorize]
         public async Task<Handbook_Service.Models.ProgramPagedListModel> GetPrograms([FromQuery] ProgramSearchModel programSearchModel)
         {
             return await _programsService.GetPrograms(programSearchModel);
-        }
+        }*/
     }
 }
