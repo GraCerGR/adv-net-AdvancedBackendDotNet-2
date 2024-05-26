@@ -92,6 +92,53 @@ namespace MVC.Controllers
             }
         }
 
+        public async Task<IActionResult> DeleteApplication(Guid userId)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7122/");
+                client.DefaultRequestHeaders.Add("accept", "text/plain");
+                string accessToken = Request.Cookies["accessToken"];
+                string refreshToken = Request.Cookies["refreshToken"];
+
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("Refresh-Token", refreshToken);
+
+                string url;
+
+                if (userId == Guid.Empty)
+                {
+                    url = $"/api/Applications/";
+                }
+                else
+                {
+                    url = $"/api/Applications/{userId}";
+                }
+
+                HttpResponseMessage response = await client.DeleteAsync(url);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.DeleteAsync(url);
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return PartialView("AssignManager", content.ToString());
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка: " + response.StatusCode);
+                    ViewData["ErrorMessage"] = response.ToString();
+                    return View("Error");
+                }
+            }
+        }
         public async Task<IActionResult> SearchApplication(ApplicationSearchModel searchModel)
         {
             searchModel.faculty = await ConvertStringToList(searchModel.faculty[0]);
