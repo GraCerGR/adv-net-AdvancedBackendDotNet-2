@@ -8,6 +8,6 @@ namespace User_Service.Services.Interfaces
 
         Task<TokenModel> GenerateRefreshToken(Guid userId, string role);
 
-        Task<string> RefreshAccessToken(string refreshToken);
+        Task<string> RefreshAccessToken(string refreshToken, string role);
     }
 }

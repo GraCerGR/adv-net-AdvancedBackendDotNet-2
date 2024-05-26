@@ -84,7 +84,30 @@ namespace User_Service.Services
                             ex.Data.Add(StatusCodes.Status401Unauthorized.ToString(), "The user was not found");
                             throw ex;
                         }
-                        var newToken = await userService.RefreshAccessToken(refreshToken);
+
+                        string role = "Applicant";
+
+                        var manager = await _context.Managers.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+                        var admin = await _context.Admins.FirstOrDefaultAsync(x => x.UserId == user.UserId);
+
+                        if (manager != null)
+                        {
+                            if (manager.MainManager == false)
+                            {
+                                role = "Manager";
+                            }
+                            else
+                            {
+                                role = "MainManager";
+                            }
+                        }
+
+                        if (admin != null)
+                        {
+                            role = "Admin";
+                        }
+
+                        var newToken = await userService.RefreshAccessToken(refreshToken, role);
                         context.Response.Headers.Add("Authorization", "Bearer " + newToken);
                     }
 /*                    try

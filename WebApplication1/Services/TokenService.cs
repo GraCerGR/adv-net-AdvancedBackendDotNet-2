@@ -67,7 +67,7 @@ namespace User_Service.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-            //new Claim(ClaimTypes.Name, userId.ToString()),
+            new Claim(ClaimTypes.Name, userId.ToString()),
             //new Claim(ClaimTypes.Role, role),
             new Claim("TokenType", "Refresh")
         }),
@@ -89,12 +89,12 @@ namespace User_Service.Services
             return token;
         }
 
-        public async Task<string> RefreshAccessToken(string refreshToken)
+        public async Task<string> RefreshAccessToken(string refreshToken, string role)
         {
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(refreshToken);
-            string role = jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+            //string role = jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
 
             var validationParameters = new TokenValidationParameters
             {
