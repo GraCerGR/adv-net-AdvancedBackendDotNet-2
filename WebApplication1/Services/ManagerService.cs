@@ -76,5 +76,42 @@ namespace User_Service.Services
 
             return managerCreateModel;
         }
+
+        public async Task<List<ManagerDto>> GetManagers()
+        {
+            var managers = await _context.Managers.ToListAsync();
+
+            var managerDtos = new List<ManagerDto>();
+
+            foreach (var manager in managers)
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == manager.UserId);
+
+                if (user != null)
+                {
+                    var userDto = new UserDto
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Email = user.Email,
+                        Birthdate = user.Birthdate,
+                        Gender = user.Gender,
+                        Citizenship = user.Citizenship,
+                        PhoneNumber = user.PhoneNumber
+                    };
+
+                    var managerDto = new ManagerDto
+                    {
+                        Id = manager.Id,
+                        UserId = userDto,
+                        MainManager = manager.MainManager
+                    };
+
+                    managerDtos.Add(managerDto);
+                }
+            }
+
+            return managerDtos;
+        }
     }
 }
