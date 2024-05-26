@@ -417,19 +417,8 @@ namespace Manager_Service.Services
                 user.ApplicationStatus = false;
             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                var innerException = ex.InnerException;
-                while (innerException != null)
-                {
-                    Console.WriteLine("Inner Exception: " + innerException.Message);
-                    innerException = innerException.InnerException;
-                }
-            }
+            await _context.SaveChangesAsync();
+            await _contextU.SaveChangesAsync();
 
             var messageData = new MessageDto
             {

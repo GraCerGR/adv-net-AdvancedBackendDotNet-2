@@ -53,7 +53,7 @@ namespace Manager_Service.Controllers
         //Удалить заявку
         [HttpDelete]
         [Authorize]
-        public async Task DeleteApplication()
+        public async Task<string> DeleteApplication()
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
@@ -61,12 +61,14 @@ namespace Manager_Service.Controllers
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
             await _applicationsService.DeleteApplication(Guid.Parse(AuthorizeuserId), null);
+
+            return "The application was deleted successfully";
         }
 
         //Удалить заявку пользователя с id UserId
         [HttpDelete("{userId}")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
-        public async Task DeleteApplicationBy([FromRoute] Guid userId)
+        public async Task<string> DeleteApplicationBy([FromRoute] Guid userId)
         {
             string authorizationHeader = Request.Headers["Authorization"];
             string bearerToken = authorizationHeader.Substring("Bearer ".Length);
@@ -74,6 +76,8 @@ namespace Manager_Service.Controllers
             var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
             await _applicationsService.DeleteApplication(userId, Guid.Parse(AuthorizeuserId));
+
+            return "The application was deleted successfully";
         }
 
         //Назначить менеджера (себя) на заявление
