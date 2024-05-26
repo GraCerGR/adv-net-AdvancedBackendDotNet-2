@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.Models.Handbook;
@@ -25,6 +26,15 @@ namespace MVC.Controllers
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
 
                 var response = await client.GetAsync("/api/Handbook/EducationLevels");
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.GetAsync("/api/Handbook/EducationLevels");
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -58,6 +68,15 @@ namespace MVC.Controllers
 
                 var response = await client.GetAsync("/api/Handbook/Faculties");
 
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.GetAsync("/api/Handbook/Faculties");
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
                     var Content = await response.Content.ReadAsStringAsync();
@@ -90,6 +109,15 @@ namespace MVC.Controllers
 
                 var response = await client.GetAsync("/api/Handbook/DocumentTypes");
 
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.GetAsync("/api/Handbook/DocumentTypes");
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
                     var Content = await response.Content.ReadAsStringAsync();
@@ -121,6 +149,15 @@ namespace MVC.Controllers
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
 
                 var response = await client.GetAsync("/api/Handbook/Programs");
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.GetAsync("/api/Handbook/Programs");
+                }
 
                 if (response.IsSuccessStatusCode)
                 {

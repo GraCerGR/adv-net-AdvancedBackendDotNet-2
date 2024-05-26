@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using MVC.Models.Handbook;
 using MVC.Models.Programs;
@@ -23,6 +24,15 @@ namespace MVC.Controllers
                 string url = $"/api/Programs/programs?Faculty={searchModel.Faculty}&EducationLevel={searchModel.EducationLevel}&EducationForm={searchModel.EducationForm}&Language={searchModel.Language}&Code={searchModel.Code}&Name={searchModel.Name}&Page={searchModel.Page}&Size={searchModel.Size}";
 
                 HttpResponseMessage response = await client.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.GetAsync(url);
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -54,15 +64,26 @@ namespace MVC.Controllers
                 var json = JsonConvert.SerializeObject(programs);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response;
+                string url;
 
                 if (userId == Guid.Empty)
                 {
-                    response = await client.PostAsync("/api/Programs/queue", content);
+                    url ="/api/Programs/queue";
                 }
                 else
                 {
-                    response = await client.PostAsync($"/api/Programs/queue/{userId}", content);
+                    url = $"/api/Programs/queue/{userId}";
+                }
+
+                HttpResponseMessage response = await client.PostAsync(url, content);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.PostAsync(url, content);
                 }
 
                 if (response.IsSuccessStatusCode)

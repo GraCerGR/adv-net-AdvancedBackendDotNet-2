@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MVC.Models;
 using MVC.Models.Handbook;
 using MVC.Models.Programs;
 using Newtonsoft.Json;
@@ -29,6 +30,53 @@ namespace MVC.Controllers
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
 
                 HttpResponseMessage response = await client.DeleteAsync($"/api/Applications/{ApplicationId}/assign-manager");
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    // Повторное выполнение запроса с новым accessToken
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.DeleteAsync($"/api/Applications/{ApplicationId}/assign-manager");
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return PartialView("AssignManager", content.ToString());
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка: " + response.StatusCode);
+                    ViewData["ErrorMessage"] = response.ToString();
+                    return View("Error");
+                }
+            }
+        }
+
+        public async Task<IActionResult> SetStatus(Guid ApplicationId, Status status)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7122/");
+                client.DefaultRequestHeaders.Add("accept", "text/plain");
+                string accessToken = Request.Cookies["accessToken"];
+                string refreshToken = Request.Cookies["refreshToken"];
+
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("Refresh-Token", refreshToken);
+
+                HttpResponseMessage response = await client.PostAsync($"/api/Applications/{ApplicationId}/status?status={status}", null);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.PostAsync($"/api/Applications/{ApplicationId}/status?status={status}", null);
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -69,6 +117,15 @@ namespace MVC.Controllers
                 string url = $"/api/Applications/applications?Name={searchModel.Name}&ProgramId={searchModel.ProgramId}&{queryString}AdmissionStatus={searchModel.AdmissionStatus}&hasNotManager={searchModel.hasNotManager}&myApplicants={searchModel.myApplicants}&sortByDate={searchModel.sortByDate}&Page={searchModel.Page}&Size={searchModel.Size}";
 
                 HttpResponseMessage response = await client.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.GetAsync(url);
+                }
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
@@ -99,15 +156,26 @@ namespace MVC.Controllers
                 var json = JsonConvert.SerializeObject(userId);
                 var contentM = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response;
+                string url;
 
                 if (userId == Guid.Empty)
                 {
-                    response = await client.PostAsync($"/api/Applications/{ApplicationId}/assign-manager", null);
+                    url = $"/api/Applications/{ApplicationId}/assign-manager";
                 }
                 else
                 {
-                    response = await client.PostAsync($"/api/Applications/{ApplicationId}/assign-manager-by?managerId={userId}", null);
+                    url = $"/api/Applications/{ApplicationId}/assign-manager-by?managerId={userId}";
+                }
+
+                HttpResponseMessage response = await client.PostAsync(url, null);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.PostAsync(url, null);
                 }
 
                 if (response.IsSuccessStatusCode)

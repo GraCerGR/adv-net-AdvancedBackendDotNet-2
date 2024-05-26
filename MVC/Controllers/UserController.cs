@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System;
 
 namespace MVC.Controllers
 {
@@ -44,6 +45,15 @@ namespace MVC.Controllers
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
 
                 var response = await client.GetAsync("/user/User/profile");
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.GetAsync("/user/User/profile");
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -134,6 +144,15 @@ namespace MVC.Controllers
 
                 HttpResponseMessage response = await client.PutAsync("user/User/profile", content);
 
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.PutAsync("user/User/profile", content);
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("UserInfo");
@@ -163,6 +182,15 @@ namespace MVC.Controllers
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 HttpResponseMessage response = await client.PutAsync("user/User/profile/changePassword", content);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.PutAsync("user/User/profile/changePassword", content);
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -194,6 +222,15 @@ namespace MVC.Controllers
 
                 HttpResponseMessage response = await client.PostAsync($"user/User/profile/code?code={code}", null) ;
 
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.PostAsync($"user/User/profile/code?code={code}", null);
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
                     return RedirectToAction("UserInfo");
@@ -220,6 +257,15 @@ namespace MVC.Controllers
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
 
                 HttpResponseMessage response = await client.PostAsync($"user/User/logout", null);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.PostAsync($"user/User/logout", null);
+                }
 
                 if (response.IsSuccessStatusCode)
                 {
