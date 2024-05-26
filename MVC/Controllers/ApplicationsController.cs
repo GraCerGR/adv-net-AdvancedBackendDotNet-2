@@ -17,6 +17,47 @@ namespace MVC.Controllers
             return View();
         }
 
+        public async Task<IActionResult> CreateApplication(Guid ApplicationId)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7122/");
+                client.DefaultRequestHeaders.Add("accept", "text/plain");
+                string accessToken = Request.Cookies["accessToken"];
+                string refreshToken = Request.Cookies["refreshToken"];
+
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
+
+                HttpResponseMessage response = await client.PostAsync($"/api/Applications", null);
+
+                if (!response.IsSuccessStatusCode && response.Headers.Contains("Authorization"))
+                {
+                    // Повторное выполнение запроса с новым accessToken
+                    string newAccessToken = response.Headers.GetValues("Authorization").FirstOrDefault()?.Replace("Bearer ", "");
+                    client.DefaultRequestHeaders.Remove("Authorization");
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + newAccessToken);
+                    Response.Cookies.Append("accessToken", newAccessToken);
+                    response = await client.PostAsync($"/api/Applications", null);
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+/*                    var contentResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<ApplicationModel>(content);
+                    return PartialView("CreateApplication", contentResponse);*/
+                    return PartialView("AssignManager", "The application was created successfully");
+
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка: " + response.StatusCode);
+                    ViewData["ErrorMessage"] = response.ToString();
+                    return View("Error");
+                }
+            }
+        }
+
         public async Task<IActionResult> DeleteManager(Guid ApplicationId)
         {
             using (var client = new HttpClient())

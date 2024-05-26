@@ -1,0 +1,28 @@
+﻿@model MVC.Models.Programs.ApplicationModel
+
+<div style="margin-bottom: 10px; margin-top: 10px">
+    <table>
+        <tr>
+            <th style="border:solid; border-width:thin">Id</th>
+            <th style="border:solid; border-width:thin">Applicant</th>
+            <th style="border:solid; border-width:thin">QueueProgram</th>
+            <th style="border:solid; border-width:thin">Manager</th>
+            <th style="border:solid; border-width:thin">Status</th>
+            <th style="border:solid; border-width:thin">LastModification</th>
+        </tr>
+            <tr>
+            <th style="border:solid; border-width:thin">@Model.Id</th>
+            <th style="border:solid; border-width:thin">@Model.Applicant</th>
+            <td style="border: solid; border-width: thin">
+            @foreach (var guid in Model.QueueProgram.Queue)
+                {
+                    <span>@guid</span>
+                    <br />
+                }
+            </td>
+            <td style="border: solid; border-width: thin">@Model.Manager</td>
+            <td style="border:solid; border-width:thin">@Model.Status</td>
+            <td style="border:solid; border-width:thin">@Model.LastModification</td>
+            </tr>
+    </table>
+</div>
