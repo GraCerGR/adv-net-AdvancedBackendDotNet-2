@@ -102,10 +102,25 @@
             <button type="submit" class="btn btn-success mt-3" id="CreateQueueButton" formmethod="post" formaction="@Url.Action("AssignManager", "Applications")">Назначить</button>
         </form>
     </div>
+    <div class="mt-3">
+        <a class="btn btn-danger" asp-area="" asp-controller="Applications" asp-action="DeleteApplication">Удалить заявку</a>
+    </div>
 
     <div id="AssignManagerResults" class="mt-3"></div>
 
-    <div id="SearchProgramsData" style="display:none;"></div>
+    @*<div id="SearchProgramsData" style="display:none;"></div>*@
+
+    <div class="mt-4">
+        <h3>Отказаться от абитуриента</h3>
+        <form asp-controller="Applications" asp-action="DeleteManager" id="DeleteManagerForm">
+            <div class="form-group">
+                <label for="AssignIds">ID Заявки:</label>
+                <input type="text" class="form-control" id="ApplicationId" name="ApplicationId" />
+            </div>
+            <button type="submit" class="btn btn-success mt-3" formmethod="post" formaction="@Url.Action("DeleteManager", "Applications")">Отказаться</button>
+        </form>
+    </div>
+    <div id="DeleteManagerResults" class="mt-3"></div>
 
 </body>
 
@@ -149,6 +164,21 @@
                         $('#SearchApplicationD').empty();
 
                         $('#SearchApplicationD').html(data); // Заменяем содержимое блока результатов новыми данными
+                    }
+                });
+            });
+
+            $('#DeleteManagerForm').submit(function (event) {
+                event.preventDefault(); // Предотвращаем стандартное действие отправки формы
+                var formData = $(this).serialize(); // Сериализуем данные формы
+                $.ajax({
+                    type: 'POST', // Используем метод POST для отправки данных
+                    url: $(this).attr('action'), // Получаем URL из атрибута action формы
+                    data: formData, // Передаем сериализованные данные
+                    success: function (data) {
+                        $('#DeleteManagerResults').empty();
+
+                        $('#DeleteManagerResults').html(data); // Заменяем содержимое блока результатов новыми данными
                     }
                 });
             });

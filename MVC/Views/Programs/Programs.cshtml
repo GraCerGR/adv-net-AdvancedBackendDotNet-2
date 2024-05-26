@@ -88,10 +88,6 @@
             @*<button type="submit" class="btn btn-success" id="CreateQueueButton">Создать очередь</button>*@
             <button type="submit" class="btn btn-success" id="CreateQueueButton" formmethod="post" formaction="@Url.Action("CreateQuery", "Programs")">Создать очередь</button>
         </form>
-            <div class="mt-3">
-                <a class="btn btn-primary" asp-area="" asp-controller="Applications" asp-action="CreateApplication">Создать заявку</a>
-                <a class="btn btn-danger" asp-area="" asp-controller="Applications" asp-action="DeleteApplication">Удалить заявку</a>
-            </div>
         </div>
     </div>
 
