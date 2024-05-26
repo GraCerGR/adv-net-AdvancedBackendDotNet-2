@@ -38,7 +38,7 @@ namespace MVC.Controllers
                 client.BaseAddress = new Uri("https://localhost:7101");
                 client.DefaultRequestHeaders.Add("accept", "text/plain");
                 string accessToken = Request.Cookies["accessToken"];
-                string refreshToken = HttpContext.Session.GetString("refreshToken");
+                string refreshToken = Request.Cookies["refreshToken"];
 
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
@@ -99,8 +99,12 @@ namespace MVC.Controllers
 
                     var tokenResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenResponse>(responseContent);
 
+                    Console.WriteLine(tokenResponse.refreshToken);
+                    
+
                     Response.Cookies.Append("accessToken", tokenResponse.accessToken);
-                    HttpContext.Session.SetString("refreshToken", tokenResponse.refreshToken);
+                    Response.Cookies.Append("refreshToken", tokenResponse.refreshToken);
+                    //HttpContext.Session.SetString("refreshToken", tokenResponse.refreshToken);
 
                     return RedirectToAction("UserInfo");
                 }
@@ -120,7 +124,7 @@ namespace MVC.Controllers
                 client.BaseAddress = new Uri("https://localhost:7101/");
                 client.DefaultRequestHeaders.Add("accept", "text/plain");
                 string accessToken = Request.Cookies["accessToken"];
-                string refreshToken = HttpContext.Session.GetString("refreshToken");
+                string refreshToken = Request.Cookies["refreshToken"];
 
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
@@ -150,7 +154,7 @@ namespace MVC.Controllers
                 client.BaseAddress = new Uri("https://localhost:7101/");
                 client.DefaultRequestHeaders.Add("accept", "text/plain");
                 string accessToken = Request.Cookies["accessToken"];
-                string refreshToken = HttpContext.Session.GetString("refreshToken");
+                string refreshToken = Request.Cookies["refreshToken"];
 
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
@@ -180,7 +184,7 @@ namespace MVC.Controllers
                 client.BaseAddress = new Uri("https://localhost:7101/");
                 client.DefaultRequestHeaders.Add("accept", "text/plain");
                 string accessToken = Request.Cookies["accessToken"];
-                string refreshToken = HttpContext.Session.GetString("refreshToken");
+                string refreshToken = Request.Cookies["refreshToken"];
 
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
@@ -210,7 +214,7 @@ namespace MVC.Controllers
                 client.BaseAddress = new Uri("https://localhost:7101/");
                 client.DefaultRequestHeaders.Add("accept", "text/plain");
                 string accessToken = Request.Cookies["accessToken"];
-                string refreshToken = HttpContext.Session.GetString("refreshToken");
+                string refreshToken = Request.Cookies["refreshToken"];
 
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 client.DefaultRequestHeaders.Add("Refresh-token", refreshToken);
@@ -221,7 +225,8 @@ namespace MVC.Controllers
                 {
 
                     Response.Cookies.Delete("accessToken");
-                    HttpContext.Session.Remove("refreshToken");
+                    Response.Cookies.Delete("refreshToken");
+                    //HttpContext.Session.Remove("refreshToken");
 
                     return RedirectToAction("Login");
                 }
