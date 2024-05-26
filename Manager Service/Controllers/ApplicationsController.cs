@@ -25,7 +25,7 @@ namespace Manager_Service.Controllers
         }
 
         //Получить все заявки
-        [HttpGet("applications")]
+/*        [HttpGet("applications")]
         [Authorize(Roles = "Manager, MainManager, Admin")]
         public async Task<ApplicationPagedListModel> GetApplications([FromQuery] ApplicationSearchModel applicationSearchModel)
         {
@@ -35,7 +35,7 @@ namespace Manager_Service.Controllers
                         var AuthorizeuserId = await _userService.GetUserIdFromToken(bearerToken);
 
             return await _applicationsService.GetApplication(applicationSearchModel, Guid.Parse(AuthorizeuserId));
-        }
+        }*/
 
         //Создать заявку
         [HttpPost]
